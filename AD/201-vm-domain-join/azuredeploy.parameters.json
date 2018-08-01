@@ -1,0 +1,39 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "existingVNETName": {
+      "value": "adVNET"
+    },
+    "existingSubnetName": {
+      "value": "adSubnet"
+    },
+    "vmSize": {
+      "value": "Standard_D2_v3"
+    },
+    "domainToJoin": {
+      "value": "win.local"
+    },
+    "domainUsername": {
+      "value": "winadmin"
+    },
+    "domainPassword": {
+      "value": ""
+    },
+    "domainJoinOptions": {
+      "value": 3
+    },
+    "vmAdminUsername": {
+      "value": "azureUser"
+    },
+    "vmAdminPassword": {
+      "value": ""
+    },
+    "dnsLabelPrefix": {
+      "value": "vm1" 
+    },
+    "ouPath": {
+      "value": "OU=WorkerVMs,DC=win,DC=local" 
+    }
+  }
+}

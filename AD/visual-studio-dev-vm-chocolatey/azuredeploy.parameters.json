@@ -1,0 +1,51 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dnsLabelPrefix": {
+      "value": "vm1"
+    },
+    "existingVNETName": {
+      "value": "adVNET"
+    },
+    "existingSubnetName": {
+      "value": "adSubnet"
+    },
+    "vmSize": {
+      "value": "Standard_D2_v3"
+    },
+    "domainToJoin": {
+      "value": "win.local"
+    },
+    "domainUsername": {
+      "value": "winadmin"
+    },
+    "domainPassword": {
+      "value": ""
+    },
+    "domainJoinOptions": {
+      "value": 3
+    },
+    "ouPath": {
+      "value": "CN=computers,DC=win,DC=local"
+    },
+    "storageType": {
+      "value": "Standard_LRS"
+    },
+    "vmName": {
+      "value": "VSVM"
+    },
+    "vmAdminUserName": {
+      "value": "azureUser"
+    },
+    "vmAdminPassword": {
+      "value": ""
+    },
+    "vmVisualStudioVersion": {
+      "value": "VS-2017-Comm-WS2016"
+    },
+    "chocoPackages": {
+      "value": "sysinternals;beyondcompare;fiddler4;visualstudiocode;docker"
+    }
+  }
+}
