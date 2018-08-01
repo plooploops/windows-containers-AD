@@ -155,7 +155,7 @@ We will want to run the MSMQ Monolith container.  Conceptually, we're going to u
 
 The queue by default will be located at .\private$\testQueue.
 
-![1 container 1 private queue, with sender and receiver.](media/scenario-1-monolith/monolith-container-scenario.png 'Monolith')
+![1 container 1 private queue, with sender and receiver.](media/scenario-1-monolith/monolith.png 'Monolith')
 
 ```
 docker run -it <my-repo>/windows-ad:msmq-monolith-test
@@ -200,7 +200,7 @@ We will also want to bootstrap MSMQ folder data.
 
 #### Running the scenario
 
-![Peristent volume permissions.](media/scenario-2-persistent-volume/permissions.png 'Persistent Volume Permissions')
+![Peristent volume permissions.](media/scenario-2-persistent-volume/permissions.png 'Permissions')
 
 We'll want to run the containers next and point them to the local volume mount.
 
