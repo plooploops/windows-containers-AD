@@ -14,23 +14,7 @@ namespace MSMQSenderTest
     {
 
         static void Main(string[] args)
-        {
-            FileStream ostrm;
-            StreamWriter writer;
-            TextWriter oldOut = Console.Out;
-            try
-            {
-                ostrm = new FileStream("./MSMQSender.txt", FileMode.OpenOrCreate, FileAccess.Write);
-                writer = new StreamWriter(ostrm);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Cannot open Redirect.txt for writing");
-                Console.WriteLine(e.Message);
-                return;
-            }
-            Console.SetOut(writer);
-            
+        {            
             MSMQHelper msmqHelper = new MSMQHelper();
             
             string queueName = Environment.GetEnvironmentVariable("QUEUE_NAME") ?? Constants.PRIVATE_QUEUE_NAME;
