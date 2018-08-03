@@ -138,16 +138,30 @@ remote debugging by installing VS debugger in the container. (blog post availabl
 ## Samples
 To build the samples (using [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)) run the commands below (be sure to use your images in commands for each example).  Alternatively you can use the provided docker images on my docker hub repo.
 
+**WSL**
 ```
 ./auth-examples/build.sh <your-docker-repo>
 ```
 
+**Powershell**
+```
+./auth-examples/build.ps1 <your-docker-repo>
+```
+
 To publish to a docker repository:
 
+**WSL**
 ```
 docker login 
 ./auth-examples/push.sh <your-docker-repo>
 ```
+
+**Powershell**
+```
+docker login 
+./auth-examples/push.ps1 <your-docker-repo>
+```
+
 
 ### MSMQ Monolith
 
@@ -155,7 +169,7 @@ We will want to run the MSMQ Monolith container.  Conceptually, we're going to u
 
 The queue by default will be located at .\private$\testQueue.
 
-![1 container 1 private queue, with sender and receiver.](media/scenario-1-monolith/monolith.png 'Monolith')
+![Monolith with private queue.](media/monolith/monolith-scenario.png 'Monolith')
 
 ```
 docker run -it <my-repo>/windows-ad:msmq-monolith-test
@@ -179,28 +193,46 @@ docker exec -it <my-container-id> powershell
 C:\Receiver\MSMQReceiverTest.exe
 ```
 
+![Test Success.](media/monolith/successful-test.png 'Monolith test')
+
+
 ### MSMQ Persistent Volume on Host
 
 We will mount a persistent volume to the host (could be a Windows VM, Azure Windows VM) so that the private queue (e.g. .\private$\testQueue) will have the data stored in the mount.
 
-![Peristent volume on host for MSMQ private queue with  sender and receiver containers.](media/scenario-2-persistent-volume/persistent-volume-scenario.png 'Persistent Volume')
+![Peristent volume on host for MSMQ private queue with  sender and receiver containers.](media/persistent-volume/persistent-volume-scenario.png 'Persistent Volume')
+
+#### Links
+
+These will describe some of the concepts that we're using in this scenario.
+
+1.  [Windows Containers Networking](https://blogs.technet.microsoft.com/virtualization/2016/05/05/windows-container-networking/)
+2.  [Windows Containers Volumes](https://docs.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/container-storage)
 
 #### Prep script
-A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with this process.
-
-We will want to set up a local folder for testing the volume mount on the, for instance C:\msmq.
+A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with this process, and we'll want to run it on the host.
 
 ```
-mkdir C:\msmq --Force
+.\scripts\persistent-volume-mount-prep.ps1
 ```
 
-We will want to grant permissions for everyone on that folder (this is just a test).
+The script will set up a **local folder** for testing the **volume mount** on the, for instance C:\msmq.
 
-We will also want to bootstrap MSMQ folder data.
+It will grant **permissions** for everyone on that folder (this is just a test).
+
+We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
+
+![Peristent volume data.](media/persistent-volume/volume-mount-data.png 'Queue Data')
 
 #### Running the scenario
 
-![Peristent volume permissions.](media/scenario-2-persistent-volume/permissions.png 'Permissions')
+We can verify the permissions on the folder in PowerShell.
+
+```
+Get-ACL C:\<local volume mount>
+```
+
+![Peristent volume permissions.](media/persistent-volume/permissions.png 'Permissions')
 
 We'll want to run the containers next and point them to the local volume mount.
 
@@ -220,7 +252,7 @@ If we're using **NAT network driver**, it might look something like this:
 
 Run the sender.
 ```
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\\msmq:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
 ```
 
 Run the receiver.
