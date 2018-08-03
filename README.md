@@ -162,7 +162,7 @@ docker login
 ./auth-examples/push.ps1 <your-docker-repo>
 ```
 
-
+***
 ### MSMQ Monolith
 
 We will want to run the MSMQ Monolith container.  Conceptually, we're going to use a private queue that will be accessible from within the container by both the sender and receiver applications.
@@ -195,12 +195,12 @@ C:\Receiver\MSMQReceiverTest.exe
 
 ![Test Success.](media/monolith/successful-test.png 'Monolith test')
 
-
+***
 ### MSMQ Persistent Volume on Host
 
 We will mount a persistent volume to the host (could be a Windows VM, Azure Windows VM) so that the private queue (e.g. .\private$\testQueue) will have the data stored in the mount.
 
-![Peristent volume on host for MSMQ private queue with  sender and receiver containers.](media/persistent-volume/persistent-volume-scenario.png 'Persistent Volume')
+![Peristent volume on host for MSMQ private queue with  sender and receiver containers.](media/persistent-volume/scenario.png 'Persistent Volume')
 
 #### Links
 
