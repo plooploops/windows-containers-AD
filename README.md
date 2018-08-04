@@ -179,6 +179,12 @@ docker login
 docker login 
 ./auth-examples/push.ps1 <your-docker-repo>
 ```
+***
+## Environment variables
+
+* QUEUE_NAME - This will be the path for the queue.  E.g. for **private queue** .\private$\TestQueue for **public queue** worker\TestQueue
+* DIRECT_FORMAT_PROTOCOL - This will be the direct format protocol.  It can be something like OS, TCP, etc.  See the direct format naming for appropriate protocols.
+* USER - 
 
 ***
 ### MSMQ Monolith
@@ -250,7 +256,7 @@ We can verify the permissions on the folder in PowerShell.
 Get-ACL C:\<local volume mount>
 ```
 
-![Peristent volume permissions.](media/persistent-volume/permissions.png 'Permissions')
+![Peristent volume permissions.](media/persistent-volume/permissions.PNG 'Permissions')
 
 We'll want to run the containers next and point them to the local volume mount.
 
