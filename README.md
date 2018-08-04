@@ -234,6 +234,12 @@ docker login
 docker login
 ./auth-examples/push.ps1 <your-docker-repo>
 ```
+***
+## Environment variables
+
+* QUEUE_NAME - This will be the path for the queue.  E.g. for **private queue** .\private$\TestQueue for **public queue** worker\TestQueue
+* DIRECT_FORMAT_PROTOCOL - This will be the direct format protocol.  It can be something like OS, TCP, etc.  See the direct format naming for appropriate protocols.
+* USER - 
 
 -----
 
@@ -258,7 +264,7 @@ docker run -d <my-repo>/windows-ad:msmq-monolith-test
 ```powershell
 docker exec -it <my-container-id> powershell
 # run this in the container
-C:\Sender\MSMQSenderTest.exe 
+C:\Sender\MSMQSenderTest.exe
 ```
 
 ```powershell
@@ -269,7 +275,7 @@ C:\Receiver\MSMQReceiverTest.exe
 
 ![Test Success.](media/monolith/successful-test.png 'Monolith test')
 
------
+----
 
 ### MSMQ Persistent Volume on Host
 
@@ -309,7 +315,7 @@ We can verify the permissions on the folder in PowerShell.
 Get-ACL C:\<local volume mount>
 ```
 
-![Persistent volume permissions.](media/persistent-volume/permissions.png 'Permissions')
+![Peristent volume permissions.](media/persistent-volume/permissions.PNG 'Permissions')
 
 We'll want to run the containers next and point them to the local volume mount.
 
@@ -348,8 +354,8 @@ Tried these commands to set up delegation:
 ```powershell
 Set-ADServiceAccount -Identity frontend -TrustedForDelegation $true
 Set-ADServiceAccount -Identity backend -TrustedForDelegation $true
-$impersonatin = Get-ADServiceAccount -Identity frontend
-Set-ADServiceAccount backend -PrincipalsAllowedToDelegateToAccount $impersonatin
+$impersonation = Get-ADServiceAccount -Identity frontend
+Set-ADServiceAccount backend -PrincipalsAllowedToDelegateToAccount $impersonation
 Set-ADServiceAccount -identity backend -replace @{userAccountControl=16781312}
 ```
 
