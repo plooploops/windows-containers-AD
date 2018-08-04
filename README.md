@@ -91,7 +91,6 @@ Create group to add host computers to, and create GMSA accounts to be used. In t
 You must **Reboot** the container host machine (worker1 in this example) so it has access to the GMSA account passwords.
 
 #### Test GMSA access from Container Host VM
-
 Remote into worker machine (woker1 vm) and ** Switch to PowerShell**.  When you login it defaults to cmd.
 
 Install AD components on worker machine:
@@ -159,19 +158,52 @@ net config workstation
 
 > This one should have some print out that shows computer name of the gmsa account)
 
-# Advanced Debugging
+## Advanced Debugging
 
 Kerberos debugging - kerberos ticket check. From inside the container, run:
 
-```cmd
+```powershell
 klist
 ```
 
-remote debugging by installing VS debugger in the container. (blog post available)
+#### Test gMSA in Container
+
+```powershell
+nltest.exe /query
+```
+
+This should return the DC.
+
+```powershell
+nltest.exe /parentdomain
+```
+
+Check the connection to the DC
+
+```powershell
+nltest.exe /sc_verify:<parent domain e.g. win.local>
+```
+
+This one should have some print out that shows computer name of the gmsa account.
+
+```powershell
+net config workstation
+```
+
+# Advanced Debugging 
+Kerberos debugging - kerberos ticket check
+
+```powershell
+klist
+```
 
 should return success message
 
 ## Samples
+
+Remote debugging by installing VS debugger in the container. (blog post available)
+
+# Samples
 
 To build the samples (using [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)) run the commands below (be sure to use your images in commands for each example).  Alternatively you can use the provided docker images on my docker hub repo.
 
@@ -260,9 +292,9 @@ A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with
 .\scripts\persistent-volume-mount-prep.ps1
 ```
 
-The script will set up a **local folder** for testing the **volume mount** on the, for instance C:\msmq.
+The script will set up a **local folder** for testing the **volume mount** on the host, for instance C:\msmq.
 
-It will grant **permissions** for everyone on that folder (this is just a test).
+It will grant **permissions** for **everyone** on that folder (this is just a test).
 
 We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
 

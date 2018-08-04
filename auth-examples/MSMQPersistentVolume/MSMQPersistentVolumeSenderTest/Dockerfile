@@ -17,4 +17,8 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 WORKDIR /Sender
 COPY --from=build-agent C:\out\ .
 
+# RUN $msmqsend = Start-Process MSMQSenderTest.exe -PassThru; `
+#     Start-Sleep -Seconds 10; `
+#     Stop-Process -InputObject $msmqsend;
+
 ENTRYPOINT .\MSMQSenderTest.exe
