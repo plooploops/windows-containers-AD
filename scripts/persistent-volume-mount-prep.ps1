@@ -36,7 +36,7 @@ $repo='myplooploops'
 #run the container
 docker run --name=persistent_volume_bootstrap -d -v c:\ContainerData\msmq:c:/volume-data "$repo/windows-ad:msmq-persistent-volume-bootstrap"
 
-cp -r "$bootstrapvolumepath\*" "$volumepath" -force
+cp -r C:\containerdata\msmq\* C:\msmq -force
 
 docker stop persistent_volume_bootstrap
 docker rm persistent_volume_bootstrap
