@@ -119,10 +119,12 @@ Get-CredentialSpec
 ```
 
 > It should be the following:
-> Name          Path
+> ```
+>  Name          Path
 > ----          ----
 > app1 C:\ProgramData\docker\CredentialSpecs\app1.json
 > app2 C:\ProgramData\docker\CredentialSpecs\app2.json
+> ```
 
 Reboot the container host
 
@@ -140,7 +142,7 @@ Test-ADServiceAccount app2
 Set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
 
 ```powershell
-docker run -h containergmsa -it --security-opt "credentialspec=file://containergmsa.json" microsoft/windowsservercore:1709 cmd
+docker run -h app1 -it --security-opt "credentialspec=file://app1.json" microsoft/windowsservercore:1709 cmd
 ```
 
 in the container run

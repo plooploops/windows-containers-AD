@@ -77,7 +77,7 @@
     "storageAccountType": "Standard_LRS",
     "imagePublisher": "MicrosoftWindowsServer",
     "imageOffer": "WindowsServerSemiAnnual",
-    "windowsOSVersion": "Datacenter-Core-1709-with-Containers-smalldisk",
+    "windowsOSVersion": "Datacenter-Core-1803-with-Containers-smalldisk",
     "apiVersion": "2015-06-15",
     "nicName": "[concat(parameters('dnsLabelPrefix'),'Nic')]",
     "publicIPName": "[concat(parameters('dnsLabelPrefix'),'Pip')]",
