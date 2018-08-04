@@ -83,9 +83,9 @@ $group | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
 You must **Reboot** the container host machine (work1 in this example) so it has access to the GMSA account passwords. 
 
 #### Test GMSA access from Container Host VM
-Remote into worker machine (woker1 vm) and ** Switch to PowerShell**.  When you login it defaults to cmd.
+Remote into worker machine (worker1 vm) and ** Switch to PowerShell**.  When you login it defaults to cmd.
 
-Install AD componentes on worker machine:
+Install AD components on worker machine:
 
 ```
 Add-WindowsFeature RSAT-AD-PowerShell
@@ -116,26 +116,44 @@ Get-CredentialSpec
 
 #### Test it
 
-```
 Set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
 
 ```
 docker run -h containergmsa -it --security-opt "credentialspec=file://containergmsa.json" microsoft/windowsservercore:1709 cmd
+```
 
-#in the container run
+#### Test gMSA in Container
+
+```
 nltest.exe /query
-nltest.exe /parentdomain (should return DC)
-net config workstation (this one should have some print out that shows computer name of the gmsa account)
+```
 
-# Advanced Debugging
+This should return the DC.
+```
+nltest.exe /parentdomain
+```
+
+Check the connection to the DC
+```
+nltest.exe /sc_verify:<parent domain e.g. win.local>
+```
+
+This one should have some print out that shows computer name of the gmsa account.
+
+```
+net config workstation
+```
+
+# Advanced Debugging 
 Kerberos debugging - kerberos ticket check
+
+```
 klist
+```
 
-remote debugging by installing VS debugger in the container. (blog post available)
+Remote debugging by installing VS debugger in the container. (blog post available)
 
-## should return success message
-
-## Samples
+# Samples
 To build the samples (using [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)) run the commands below (be sure to use your images in commands for each example).  Alternatively you can use the provided docker images on my docker hub repo.
 
 **WSL**
@@ -216,9 +234,9 @@ A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with
 .\scripts\persistent-volume-mount-prep.ps1
 ```
 
-The script will set up a **local folder** for testing the **volume mount** on the, for instance C:\msmq.
+The script will set up a **local folder** for testing the **volume mount** on the host, for instance C:\msmq.
 
-It will grant **permissions** for everyone on that folder (this is just a test).
+It will grant **permissions** for **everyone** on that folder (this is just a test).
 
 We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
 

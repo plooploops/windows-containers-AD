@@ -34,14 +34,18 @@ $acl
 
 $repo='myplooploops'
 #run the container
-docker run --name=persistent_volume_bootstrap -d -v "$bootstrapvolumepath:c:/volume-data" "$repo/windows-ad:msmq-persistent-volume-bootstrap"
+docker run --name=persistent_volume_bootstrap -d -v c:\ContainerData\msmq:c:/volume-data "$repo/windows-ad:msmq-persistent-volume-bootstrap"
 
 cp -r "$bootstrapvolumepath\*" "$volumepath" -force
 
 docker stop persistent_volume_bootstrap
 docker rm persistent_volume_bootstrap
 # #clean up bootstrap directory
-# Remove-Item $volumepath -Force -Recurse
+Remove-Item $bootstrapvolumepath -Force -Recurse
 
-docker run --name=persistent_volume_sender_test -d -v "$volumepath:c:/Windows/System32/msmq" "$repo/windows-ad:msmq-persistent-volume-sender-test"
-docker run --name=persistent_volume_receiver_test -d -v "$volumepath:c:/Windows/System32/msmq" "$repo/windows-ad:msmq-persistent-volume-receiver-test"
+#example runs
+docker run --name=persistent_volume_sender_test -d -v c:\msmq:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-sender-test"
+docker run --name=persistent_volume_receiver_test -d -v c:\msmq:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test"
+
+# docker run --name=persistent_volume_sender_test -it -v c:\msmq:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-sender-test"
+# docker run --name=persistent_volume_receiver_test -it -v c:\msmq:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test"
