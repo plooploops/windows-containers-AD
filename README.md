@@ -21,6 +21,12 @@ To get started:
 
 Using the template's located in `AD/active-directory-new-domain`
 
+This template will create a VNET with the 10.0.0.0/16 range with at 10.0.0.0/24 subnet.  The domain controller (Standard_D2_v2 VM) will be given the static IP address of 10.0.0.4. The Azure DNS settings for the deployment will be updated to point all VMs to the DC for DNS resolution.
+
+The azuredeploy.parameters.json file is used to customize the domain name of the AD forest and the dnsPrefix used by deployment, as well as a few other variables.  You should review this file and edit it to align with your needs before deploying. 
+
+The required AD roles will be installed by using DSC and calling the CerateADPDC.ps1 configuration.  Then it will run the "usercreation.ps1" as custom script file to create users. The "usercreation.ps1" file sets up the KDS Root Key, creates groups for Container Host machines and test users.  It also creates some sample gMSA accounts for use with some of the IIS scenarios in this repo.
+
 ```powershell
 az group create -n windows-container-ad -l eastus
 
@@ -32,9 +38,12 @@ az group deployment create --name addeploy -g windows-container-ad \
 
 You can now Log in with user `win\winadmin`
 
-### Setup OUs, Groups and GMSA Accounts on the Domain
 
-Log onto the DC if you haven't already. Use the "usercreation.ps1" file will help you set up the OU and AD Groups needed for the container host VMs, as well as the GMSA accounts for the frontend and backend services.
+### Setup OUs, Groups and GMSA Accounts on the Domain 
+
+Log onto the DC if you haven't already. The "usercreation.ps1" file will have already set up some users, groups and OUs and completed the steps below. If you did not edit it before deployment, use the "usercreation.ps1" file as a reference to review what was created in Active Directory and create any additional components you might need for your scenarios.  
+
+If you manually promoted a VM to be a domain controller without using the deployment template, you will need to do all the steps below, using the "usercreation.ps1" file as a guide.
 
 #### Add KDS Root Key
 
@@ -76,7 +85,7 @@ az group deployment create --name add-domain -g windows-container-ad \
 
 You should be able to remote into the domain joined vm using admin user to test that it is domain joined.  These machines should be added to the Worker VM OU and become members of the "container hosts" AD Group.
 
-#### Create AD Group for Container Host Servers
+#### Create AD Group for Container Host Servers (Completed by usercreation.ps1)
 
 ```powershell
 New-ADGroup -GroupCategory Security -DisplayName "Container Hosts" -Name containerhosts -GroupScope Universal
@@ -86,24 +95,28 @@ $group | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
 
 #### Create Managed Service Account
 
-Create group to add host computers to, and create GMSA accounts to be used. In the `usercreation.ps1` file there are examples for both a frontend and backend service.
+Create group to add host computers to, and create GMSA accounts to be used. In the `usercreation.ps1` file there are examples for both a frontend and backend service. 
 
-You must **Reboot** the container host machine (worker1 in this example) so it has access to the GMSA account passwords.
+You must **Reboot** the container host machine (worker1 in this example) after it is added to the "Container Hosts" security group so it has access to the GMSA account passwords.
 
 #### Test GMSA access from Container Host VM
 Remote into worker machine (woker1 vm) and ** Switch to PowerShell**.  When you login it defaults to cmd.
 
-Install AD components on worker machine:
+Install AD components on worker machine and test access to the gMSA accounts:
 
 ```powershell
 Add-WindowsFeature RSAT-AD-PowerShell
 Import-Module ActiveDirectory
-```
 
-#### Create a spec for gMSA on the Container Host VM
+Test-ADServiceAccount app1
+Test-ADServiceAccount app2
+```
+> This should return true
+
+#### Create a cred spec file for gMSA on the Container Host VM
 
 Notes:
-   This file needs to be accessible from where ever the the container needs to be run.  (every vm in your cluster)
+   This file needs to be accessible from where ever the the container needs to be run.  (every vm in your cluster)  The file needs to have the same name as the gMSA account in Active Directory.  This file does not contain any secrets, it is simply a reference file used by docker when the container is run to reference the account in Active Directory. 
 
 Create a new credential spec:
 
@@ -126,26 +139,13 @@ Get-CredentialSpec
 > app2 C:\ProgramData\docker\CredentialSpecs\app2.json
 > ```
 
-Reboot the container host
-
-#### Test it
-
-Test access to GMSA Account. RDP into container host
-
-```powershell
-Test-ADServiceAccount app1
-Test-ADServiceAccount app2
-```
-
-> This should return true
-
-Set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
+When running your container, set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
 
 ```powershell
 docker run -h app1 -it --security-opt "credentialspec=file://app1.json" microsoft/windowsservercore:1709 cmd
 ```
 
-in the container run
+from in the container run
 
 ```cmd
 nltest.exe /query
@@ -158,7 +158,7 @@ nltest.exe /parentdomain
 net config workstation
 ```
 
-> This one should have some print out that shows computer name of the gmsa account)
+> This one should have some print out that shows computer name of the gmsa account.
 
 ## Advanced Debugging
 
