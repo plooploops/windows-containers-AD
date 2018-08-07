@@ -26,19 +26,19 @@
         "description": "The DNS prefix for the public IP address used by the Load Balancer"
       }
     },
-    "gistlocation": {
+    "gitlocation": {
       "type": "string",
       "metadata": {
         "description": "The location of resources, such as templates and DSC modules, that the template depends on"
       },
-      "defaultValue": "https://gist.githubusercontent.com/techbunny/c87cbc6d9ac54a4b8ddd9c2178b9b28a/raw/0d48d134cd0d8cf73c4e27f64e99abd7b575eda2/"
+      "defaultValue": "https://raw.githubusercontent.com/plooploops/windows-containers-msmq/jennelle/AD/active-directory-new-domain/"
     },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
         "description": "The location of resources, such as templates and DSC modules, that the template depends on"
       },
-      "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/active-directory-new-domain"
+      "defaultValue": "https://raw.githubusercontent.com/plooploops/windows-containers-msmq/jennelle/AD/active-directory-new-domain/"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -64,8 +64,8 @@
     "adAvailabilitySetName": "adAvailabiltySet",
     "adLBName": "adLoadBalancer",
     "storageAccountType": "Standard_LRS",
-    "dcCustomScriptFileToRun": "usercreation.ps1",
-    "dcCustomScriptFileUri": "[concat(parameters('gistlocation'), variables('dcCustomScriptFileToRun'))]",
+    "dcCustomScriptFileToRun": "domainbasics.ps1",
+    "dcCustomScriptFileUri": "[concat(parameters('gitlocation'), variables('dcCustomScriptFileToRun'))]",
     "dcCommandToExecute": "[concat('powershell.exe -File', ' ', variables('dcCustomScriptFileToRun'))]"
   },
   "resources": [
@@ -249,7 +249,7 @@
               },
               "name": "[concat(variables('adVMName'),'-data-disk1')]",
               "caching": "None",
-              "diskSizeGB": "1000",
+              "diskSizeGB": 1000,
               "lun": 0,
               "createOption": "Empty"
             }
@@ -267,7 +267,7 @@
         {
           "type": "extensions",
           "name": "CreateADForest",
-          "apiVersion": "2015-06-15",
+          "apiVersion": "2017-03-30",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines', variables('adVMName'))]"
@@ -298,7 +298,7 @@
         {
           "type": "extensions",
           "name": "AddUsers",
-          "apiVersion": "2015-06-15",
+          "apiVersion": "2017-03-30",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', variables('adVMName'))]",
