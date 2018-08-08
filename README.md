@@ -25,7 +25,7 @@ This template will create a VNET with the 10.0.0.0/16 range with at 10.0.0.0/24 
 
 The azuredeploy.parameters.json file is used to customize the domain name of the AD forest and the dnsPrefix used by deployment, as well as a few other variables.  You should review this file and edit it to align with your needs before deploying. 
 
-The required AD roles will be installed by using DSC and calling the CerateADPDC.ps1 configuration.  Then it will run the "usercreation.ps1" as custom script file to create users. The "usercreation.ps1" file sets up the KDS Root Key, creates groups for Container Host machines and test users.  It also creates some sample gMSA accounts for use with some of the IIS scenarios in this repo.
+The required AD roles will be installed by using DSC and calling the CerateADPDC.ps1 configuration.  Then it will run the "domainbasics.ps1" as custom script file to create users. The "domainbasics.ps1" file sets up the KDS Root Key, creates groups for Container Host machines and test users.  
 
 ```powershell
 az group create -n windows-container-ad -l eastus
@@ -41,9 +41,9 @@ You can now Log in with user `win\winadmin`
 
 ### Setup OUs, Groups and GMSA Accounts on the Domain 
 
-Log onto the DC if you haven't already. The "usercreation.ps1" file will have already set up some users, groups and OUs and completed the steps below. If you did not edit it before deployment, use the "usercreation.ps1" file as a reference to review what was created in Active Directory and create any additional components you might need for your scenarios.  
+Log onto the DC if you haven't already. The "domainbasics.ps1" file will have already set up some users, groups and OUs and completed the steps below. If you did not edit it before deployment, use the file as a reference to review what was created in Active Directory and create any additional components you might need for your scenarios.  
 
-If you manually promoted a VM to be a domain controller without using the deployment template, you will need to do all the steps below, using the "usercreation.ps1" file as a guide.
+If you manually promoted a VM to be a domain controller without using the deployment template, you will need to do all the steps below, using the "domainbasics.ps1" file as a guide.
 
 #### Add KDS Root Key
 
@@ -59,6 +59,14 @@ Set up OU for add VM to domain (thought should be able to use [domain admin but 
 
 ```powershell
 New-ADOrganizationalUnit "WorkerVMs"
+```
+
+#### Create AD Group for Container Host Servers
+
+```powershell
+New-ADGroup -GroupCategory Security -DisplayName "Container Hosts" -Name containerhosts -GroupScope Universal
+$group = Get-ADGroup containerhosts
+$group | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
 ```
 
 #### Create AD Users (Optional)
@@ -83,26 +91,20 @@ az group deployment create --name add-domain -g windows-container-ad \
     --parameters domainPassword='<password>' vmAdminPassword='<password>' dnsLabelPrefix=worker1
 ```
 
-You should be able to remote into the domain joined vm using admin user to test that it is domain joined.  These machines should be added to the Worker VM OU and become members of the "container hosts" AD Group.
+You should be able to remote into the domain joined vm using admin user to test that it is domain joined.  These machines should be added to the Worker VM OU and become members of the "container hosts" AD Group.  You must **Reboot** the container host machine (worker1 in this example) after it is added to the "Container Hosts" security group so it has access to the GMSA account passwords in the future.
 
-#### Create AD Group for Container Host Servers (Completed by usercreation.ps1)
+> Need to add powershell steps here
 
-```powershell
-New-ADGroup -GroupCategory Security -DisplayName "Container Hosts" -Name containerhosts -GroupScope Universal
-$group = Get-ADGroup containerhosts
-$group | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
-```
 
 #### Create Managed Service Account
 
-Create group to add host computers to, and create GMSA accounts to be used. In the `usercreation.ps1` file there are examples for both a frontend and backend service. 
+Creation of the GMSA accounts can happen from any machine that has RSAT Tools and access to the domain controller. In the `gmsacreation.ps1` file there are examples for both frontend and backend services for the IIS examples, as well as examples for MSMQ sender and recievers.
 
-You must **Reboot** the container host machine (worker1 in this example) after it is added to the "Container Hosts" security group so it has access to the GMSA account passwords.
 
-#### Test GMSA access from Container Host VM
+#### Test GMSA access from Container Host VM (Optional)
 Remote into worker machine (woker1 vm) and ** Switch to PowerShell**.  When you login it defaults to cmd.
 
-Install AD components on worker machine and test access to the gMSA accounts:
+Install AD components on worker machine and test access to the gMSA accounts. Generally, it's not recommended to add RSAT tools to the worker/container host machines unless you need to for testing.
 
 ```powershell
 Add-WindowsFeature RSAT-AD-PowerShell
