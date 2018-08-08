@@ -21,12 +21,6 @@ To get started:
 
 Using the template's located in `AD/active-directory-new-domain`
 
-This template will create a VNET with the 10.0.0.0/16 range with at 10.0.0.0/24 subnet.  The domain controller (Standard_D2_v2 VM) will be given the static IP address of 10.0.0.4. The Azure DNS settings for the deployment will be updated to point all VMs to the DC for DNS resolution.
-
-The azuredeploy.parameters.json file is used to customize the domain name of the AD forest and the dnsPrefix used by deployment, as well as a few other variables.  You should review this file and edit it to align with your needs before deploying. 
-
-The required AD roles will be installed by using DSC and calling the CerateADPDC.ps1 configuration.  Then it will run the "domainbasics.ps1" as custom script file to create users. The "domainbasics.ps1" file sets up the KDS Root Key, creates groups for Container Host machines and test users.  
-
 ```powershell
 az group create -n windows-container-ad -l eastus
 
@@ -38,12 +32,9 @@ az group deployment create --name addeploy -g windows-container-ad \
 
 You can now Log in with user `win\winadmin`
 
+### Setup OUs, Groups and GMSA Accounts on the Domain
 
-### Setup OUs, Groups and GMSA Accounts on the Domain 
-
-Log onto the DC if you haven't already. The "domainbasics.ps1" file will have already set up some users, groups and OUs and completed the steps below. If you did not edit it before deployment, use the file as a reference to review what was created in Active Directory and create any additional components you might need for your scenarios.  
-
-If you manually promoted a VM to be a domain controller without using the deployment template, you will need to do all the steps below, using the "domainbasics.ps1" file as a guide.
+Log onto the DC if you haven't already. Use the "usercreation.ps1" file will help you set up the OU and AD Groups needed for the container host VMs, as well as the GMSA accounts for the frontend and backend services.
 
 #### Add KDS Root Key
 
@@ -59,14 +50,6 @@ Set up OU for add VM to domain (thought should be able to use [domain admin but 
 
 ```powershell
 New-ADOrganizationalUnit "WorkerVMs"
-```
-
-#### Create AD Group for Container Host Servers
-
-```powershell
-New-ADGroup -GroupCategory Security -DisplayName "Container Hosts" -Name containerhosts -GroupScope Universal
-$group = Get-ADGroup containerhosts
-$group | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
 ```
 
 #### Create AD Users (Optional)
@@ -91,39 +74,37 @@ az group deployment create --name add-domain -g windows-container-ad \
     --parameters domainPassword='<password>' vmAdminPassword='<password>' dnsLabelPrefix=worker1
 ```
 
-You should be able to remote into the domain joined vm using admin user to test that it is domain joined.  These machines should be added to the Worker VM OU and become members of the "container hosts" AD Group.  You must **Reboot** the container host machine (worker1 in this example) after it is added to the "Container Hosts" security group so it has access to the GMSA account passwords in the future.
+You should be able to remote into the domain joined vm using admin user to test that it is domain joined.  These machines should be added to the Worker VM OU and become members of the "container hosts" AD Group.
 
-> Need to add powershell steps here
+#### Create AD Group for Container Host Servers
 
+```powershell
+New-ADGroup -GroupCategory Security -DisplayName "Container Hosts" -Name containerhosts -GroupScope Universal
+$group = Get-ADGroup containerhosts
+$group | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
+```
 
 #### Create Managed Service Account
 
-<<<<<<< HEAD
-Creation of the GMSA accounts can happen from any machine that has RSAT Tools and access to the domain controller. In the `gmsacreation.ps1` file there are examples for MSMQ sender and recievers.
-=======
 Create group to add host computers to, and create GMSA accounts to be used. In the `AD\active-directory-new-domain\usercreation.ps1` file there are examples for both a frontend and backend service.
->>>>>>> master
 
+You must **Reboot** the container host machine (worker1 in this example) so it has access to the GMSA account passwords.
 
-#### Test GMSA access from Container Host VM (Optional)
+#### Test GMSA access from Container Host VM
 Remote into worker machine (woker1 vm) and ** Switch to PowerShell**.  When you login it defaults to cmd.
 
-Install AD components on worker machine and test access to the gMSA accounts. Generally, it's not recommended to add RSAT tools to the worker/container host machines unless you need to for testing.
+Install AD components on worker machine:
 
 ```powershell
 Add-WindowsFeature RSAT-AD-PowerShell
 Install-WindowsFeature ADLDS
 Import-Module ActiveDirectory
-
-Test-ADServiceAccount app1
-Test-ADServiceAccount app2
 ```
-> This should return true
 
-#### Create a cred spec file for gMSA on the Container Host VM
+#### Create a spec for gMSA on the Container Host VM
 
 Notes:
-   This file needs to be accessible from where ever the the container needs to be run.  (every vm in your cluster)  The file needs to have the same name as the gMSA account in Active Directory.  This file does not contain any secrets, it is simply a reference file used by docker when the container is run to reference the account in Active Directory. 
+   This file needs to be accessible from where ever the the container needs to be run.  (every vm in your cluster)
 
 Create a new credential spec:
 
@@ -146,13 +127,26 @@ Get-CredentialSpec
 > app2 C:\ProgramData\docker\CredentialSpecs\app2.json
 > ```
 
-When running your container, set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
+Reboot the container host
+
+#### Test it
+
+Test access to GMSA Account. RDP into container host
+
+```powershell
+Test-ADServiceAccount app1
+Test-ADServiceAccount app2
+```
+
+> This should return true
+
+Set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
 
 ```powershell
 docker run -h app1 -it --security-opt "credentialspec=file://app1.json" microsoft/windowsservercore:1709 cmd
 ```
 
-from in the container run
+in the container run
 
 ```cmd
 nltest.exe /query
@@ -165,7 +159,7 @@ nltest.exe /parentdomain
 net config workstation
 ```
 
-> This one should have some print out that shows computer name of the gmsa account.
+> This one should have some print out that shows computer name of the gmsa account)
 
 ## Advanced Debugging
 
@@ -303,19 +297,15 @@ These will describe some of the concepts that we're using in this scenario.
 
 A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with this process, and we'll want to run it on the host.  We will run the containers **sequentially** as each of the containers will have their own queue manager, which will assume ownership of the file mount.  This **prevents two containers** from using the **same volume mount** and running at the **same time**.
 
-This will assume that we've created the gMSA accounts in the **same host**, e.g. we will have a cred spec for **MSMQRec** and **MSMQSend**.
 ```powershell
-.\scripts\persistent-volume-mount-prep-one-host.ps1
+.\scripts\persistent-volume-mount-prep.ps1
 ```
-
-##Todo
-Explore if we can reach a private queue on a separate host.
 
 The script will set up a **local folder** for testing the **volume mount** on the host, for instance C:\msmq.
 
 It will grant **permissions** for **everyone** on that folder (this is just a test).
 
-We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.  Check C:\ContainerData\msmq\sender and C:\ContainerData\msmq\receiver.
+We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
 
 ![Persistent volume data.]
 (media/persistent-volume/volume-mount-data.png 'Queue Data')
@@ -330,32 +320,14 @@ Get-ACL C:\<local volume mount>
 
 ![Peristent volume permissions.](media/persistent-volume/permissions.PNG 'Permissions')
 
-We'll want to run the containers next and point them to the **local volume mount**.
-
-Run the sender.
-
-```powershell
-docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' "<my repo>/windows-ad:msmq-persistent-volume-sender-test"
-```
-
-Run the receiver.
-
-```powershell
-docker run --name=persistent_volume_receiver_test --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\msmq\receiver:c:/Windows/System32/msmq "<my repo>/windows-ad:msmq-persistent-volume-receiver-test"
-```
-
-![Persistent volume both containers.](media/persistent-volume/together.png 'Both Containers Interactive')
-
-We can also stop the Sender container (docker stop <container id>), and then the Receiver container should have less messages.
-
-![Persistent volume only receiver containers.](media/persistent-volume/only-receiver.png 'Only receiver container Interactive')
+We'll want to run the containers next and point them to the local volume mount.
 
 If we're using **transparent network driver**, it might look something like this:
 
 Run the sender.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -d -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -e QUEUE_NAME='MSMQRec\private$\testQueue' --network=tlan2 --dns=10.123.80.123 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend --network=tlan2 --dns=10.123.80.123 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
 ```
 
 Run the receiver.
@@ -369,7 +341,7 @@ If we're using **NAT network driver**, it might look something like this:
 Run the sender.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -d -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -e QUEUE_NAME='MSMQRec\private$\testQueue' -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
 ```
 
 Run the receiver.
