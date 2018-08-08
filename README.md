@@ -297,15 +297,19 @@ These will describe some of the concepts that we're using in this scenario.
 
 A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with this process, and we'll want to run it on the host.  We will run the containers **sequentially** as each of the containers will have their own queue manager, which will assume ownership of the file mount.  This **prevents two containers** from using the **same volume mount** and running at the **same time**.
 
+This will assume that we've created the gMSA accounts in the **same host**, e.g. we will have a cred spec for **MSMQRec** and **MSMQSend**.
 ```powershell
-.\scripts\persistent-volume-mount-prep.ps1
+.\scripts\persistent-volume-mount-prep-one-host.ps1
 ```
+
+##Todo
+Explore if we can reach a private queue on a separate host.
 
 The script will set up a **local folder** for testing the **volume mount** on the host, for instance C:\msmq.
 
 It will grant **permissions** for **everyone** on that folder (this is just a test).
 
-We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
+We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.  Check C:\ContainerData\msmq\sender and C:\ContainerData\msmq\receiver.
 
 ![Persistent volume data.]
 (media/persistent-volume/volume-mount-data.png 'Queue Data')
@@ -320,14 +324,32 @@ Get-ACL C:\<local volume mount>
 
 ![Peristent volume permissions.](media/persistent-volume/permissions.PNG 'Permissions')
 
-We'll want to run the containers next and point them to the local volume mount.
+We'll want to run the containers next and point them to the **local volume mount**.
+
+Run the sender.
+
+```powershell
+docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' "<my repo>/windows-ad:msmq-persistent-volume-sender-test"
+```
+
+Run the receiver.
+
+```powershell
+docker run --name=persistent_volume_receiver_test --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\msmq\receiver:c:/Windows/System32/msmq "<my repo>/windows-ad:msmq-persistent-volume-receiver-test"
+```
+
+![Persistent volume both containers.](media/persistent-volume/together.png 'Both Containers Interactive')
+
+We can also stop the Sender container (docker stop <container id>), and then the Receiver container should have less messages.
+
+![Persistent volume only receiver containers.](media/persistent-volume/only-receiver.png 'Only receiver container Interactive')
 
 If we're using **transparent network driver**, it might look something like this:
 
 Run the sender.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend --network=tlan2 --dns=10.123.80.123 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -d -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -e QUEUE_NAME='MSMQRec\private$\testQueue' --network=tlan2 --dns=10.123.80.123 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
 ```
 
 Run the receiver.
@@ -341,7 +363,7 @@ If we're using **NAT network driver**, it might look something like this:
 Run the sender.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -d -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -e QUEUE_NAME='MSMQRec\private$\testQueue' -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
 ```
 
 Run the receiver.

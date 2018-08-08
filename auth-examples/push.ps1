@@ -16,3 +16,9 @@ docker push "$repo/windows-ad:msmq-monolith-test"
 docker push "$repo/windows-ad:msmq-persistent-volume-bootstrap"
 docker push "$repo/windows-ad:msmq-persistent-volume-sender-test"
 docker push "$repo/windows-ad:msmq-persistent-volume-receiver-test"
+
+#public queue
+docker push "$repo/windows-ad:msmq-public-queue-receiver-test-1709"
+docker push "$repo/windows-ad:msmq-public-queue-sender-test-1709"
+docker push "$repo/windows-ad:msmq-public-queue-receiver-test-1803"
+docker push "$repo/windows-ad:msmq-public-queue-sender-test-1803"
