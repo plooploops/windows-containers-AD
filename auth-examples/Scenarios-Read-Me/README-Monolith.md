@@ -242,7 +242,7 @@ docker login
 
 * QUEUE_NAME - This will be the path for the queue.  E.g. for **private queue** .\private$\TestQueue for **public queue** worker\TestQueue
 * DIRECT_FORMAT_PROTOCOL - This will be the direct format protocol.  It can be something like OS, TCP, etc.  See the direct format naming for appropriate protocols.
-* USER - This will search for a UPN to try to impersonate.
+* USER - 
 
 -----
 

@@ -156,6 +156,15 @@ namespace MSMQHelpers
             return (privateQueue) ? string.Format("{0}\\private$\\{1}", machineName, qname) : string.Format("{0}\\{1}", machineName, qname);
         }
 
+        public MessageQueue GetMessageQueue(string path, bool sharedModeDenyReceive = false, bool enableCache = false, QueueAccessMode accessMode = QueueAccessMode.SendAndReceive){
+
+            MessageQueue mq = new MessageQueue(path, sharedModeDenyReceive, enableCache, accessMode);
+            Console.WriteLine("Set up Message Queue: " + mq.Path);
+            Console.WriteLine("Access Mode" + mq.AccessMode);
+            Console.WriteLine("Deny Shared Receive" + mq.DenySharedReceive);
+            return mq;
+        }
+
         void CreateQueue(string qname, bool transactional = true)
         {
             Console.WriteLine("Testing with Queue Name: " + qname);
@@ -179,7 +188,7 @@ namespace MSMQHelpers
                         Console.WriteLine("Queue doesn't exist so we will create one.");
                         MessageQueue mq = MessageQueue.Create(qname, transactional);
                         //This should only be set for containers.  Otherwise we can use the Current User WindowsIdentity.GetCurrent().Name
-                        //mq.SetPermissions(Constants.EVERYONE, MessageQueueAccessRights.FullControl);
+                        mq.SetPermissions(Constants.EVERYONE, MessageQueueAccessRights.FullControl);
                         Console.WriteLine("Setting Permissions");
                         mq.SetPermissions(Constants.AUTHENTICATED_USERS, MessageQueueAccessRights.FullControl);
                         Console.WriteLine("Finished Setting Permissions");
@@ -204,7 +213,7 @@ namespace MSMQHelpers
                             Console.WriteLine("Queue doesn't exist so we will create one.");
                             MessageQueue mq = MessageQueue.Create(qname, transactional);
                             //This should only be set for containers.  Otherwise we can use the Current User WindowsIdentity.GetCurrent().Name
-                            //mq.SetPermissions(Constants.EVERYONE, MessageQueueAccessRights.FullControl);
+                            mq.SetPermissions(Constants.EVERYONE, MessageQueueAccessRights.FullControl);
                             Console.WriteLine("Setting Permissions");
                             mq.SetPermissions(Constants.AUTHENTICATED_USERS, MessageQueueAccessRights.FullControl);
                             Console.WriteLine("Finished Setting Permissions");
@@ -243,13 +252,17 @@ namespace MSMQHelpers
                     msg.BodyStream = new MemoryStream(Encoding.ASCII.GetBytes(messageBody));
                     msg.Label = label;
                     msg.UseDeadLetterQueue = true;
-                    MessageQueue mq = new MessageQueue(qname);
+                    MessageQueue mq = GetMessageQueue(qname, accessMode: QueueAccessMode.PeekAndAdmin);
                     Console.WriteLine(GetQueueMetadata(qname));
+                    mq.Close();
+                    mq.Dispose();
                     
                     //send with direct format name
                     Console.WriteLine(String.Format("Send with Direct Format Queue Name: {0}", directFormatName));
-                    mq = new MessageQueue(directFormatName);
+                    mq = GetMessageQueue(directFormatName, accessMode: QueueAccessMode.Send);
                     mq.Send(msg, MessageQueueTransactionType.Single);
+                    mq.Close();
+                    mq.Dispose();
                 }
                 else
                 {
@@ -266,13 +279,17 @@ namespace MSMQHelpers
                         msg.BodyStream = new MemoryStream(Encoding.ASCII.GetBytes(messageBody));
                         msg.Label = label;
                         msg.UseDeadLetterQueue = true;
-                        MessageQueue mq = new MessageQueue(qname);
+                        MessageQueue mq = GetMessageQueue(qname, accessMode: QueueAccessMode.PeekAndAdmin);
                         Console.WriteLine(GetQueueMetadata(qname));
+                        mq.Close();
+                        mq.Dispose();
 
                         //send with direct format name
                         Console.WriteLine(String.Format("Send with Direct Format Queue Name: {0}", directFormatName));
-                        mq = new MessageQueue(directFormatName);
+                        mq = GetMessageQueue(directFormatName, accessMode: QueueAccessMode.Send);
                         mq.Send(msg, MessageQueueTransactionType.Single);
+                        mq.Close();
+                        mq.Dispose();
                     }
                 }
             }
@@ -296,11 +313,13 @@ namespace MSMQHelpers
                 {
                     //unable to find the user.
                     Console.WriteLine("Unable to find user in domain, trying out a regular path instead");
-                    MessageQueue mq = new MessageQueue(qname);
+                    MessageQueue mq = GetMessageQueue(qname, accessMode: QueueAccessMode.PeekAndAdmin);
                     Console.WriteLine(GetQueueMetadata(qname));
+                    mq.Close();
+                    mq.Dispose(); //Release usage of queue
                     //Does this need to use direct queue name?
                     Console.WriteLine(String.Format("Receive with Direct Format Queue Name: {0}", directFormatName));
-                    mq = new MessageQueue(directFormatName);
+                    mq = GetMessageQueue(directFormatName, accessMode: QueueAccessMode.Receive);
                     msg = mq.Receive();
                     long len = msg.BodyStream.Length;
 
@@ -313,17 +332,22 @@ namespace MSMQHelpers
                     msg.BodyStream.Read(msgBodyBytes, 0, (int)len);
                     //repack the message contents into the body of the message.
                     msg.Body = Encoding.ASCII.GetString(msgBodyBytes);
+                    mq.Close();
+                    mq.Dispose();
                 }
                 else
                 {
                     using (System.Security.Principal.WindowsImpersonationContext impersonationContext =
                            new WindowsIdentity(upn).Impersonate())
                     {
-                        MessageQueue mq = new MessageQueue(qname);
+                        MessageQueue mq = GetMessageQueue(qname, accessMode: QueueAccessMode.PeekAndAdmin);
                         Console.WriteLine(GetQueueMetadata(qname));
+                        mq.Close();
+                        mq.Dispose();
+
                         //Does this need to use direct queue name?
                         Console.WriteLine(String.Format("Receive with Direct Format Queue Name: {0}", directFormatName));
-                        mq = new MessageQueue(directFormatName);
+                        mq = GetMessageQueue(directFormatName);
                         msg = mq.Receive();
                         long len = msg.BodyStream.Length;
 
@@ -336,6 +360,8 @@ namespace MSMQHelpers
                         msg.BodyStream.Read(msgBodyBytes, 0, (int)len);
                         //repack the message contents into the body of the message.
                         msg.Body = Encoding.ASCII.GetString(msgBodyBytes);
+                        mq.Close();
+                        mq.Dispose();
                     }
                 }
             }
@@ -354,7 +380,7 @@ namespace MSMQHelpers
             string ret = string.Empty;
             try
             {
-                MessageQueue mq = new MessageQueue(qname);
+                MessageQueue mq = GetMessageQueue(qname, accessMode: QueueAccessMode.PeekAndAdmin);
 
                 if (Trace >= TraceLevel.None)
                 {
@@ -407,6 +433,8 @@ namespace MSMQHelpers
                     sb.AppendLine("Use Journal Queue: " + mq.UseJournalQueue);
                 }
                 ret = sb.ToString();
+                mq.Close();
+                mq.Dispose();
             }
             catch (Exception ex)
             {
