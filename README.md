@@ -98,7 +98,7 @@ You should be able to remote into the domain joined vm using admin user to test 
 
 #### Create Managed Service Account
 
-Creation of the GMSA accounts can happen from any machine that has RSAT Tools and access to the domain controller. In the `gmsacreation.ps1` file there are examples for both frontend and backend services for the IIS examples, as well as examples for MSMQ sender and recievers.
+Creation of the GMSA accounts can happen from any machine that has RSAT Tools and access to the domain controller. In the `gmsacreation.ps1` file there are examples for MSMQ sender and recievers.
 
 
 #### Test GMSA access from Container Host VM (Optional)
