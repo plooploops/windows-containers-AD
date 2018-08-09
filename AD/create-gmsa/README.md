@@ -39,6 +39,38 @@ Get-CredentialSpec
 > ```
 >  Name          Path
 > ----          ----
-> app1 C:\ProgramData\docker\CredentialSpecs\MSMQSend.json
-> app2 C:\ProgramData\docker\CredentialSpecs\MSMQReceiver.json
+> MSMQSend C:\ProgramData\docker\CredentialSpecs\MSMQSend.json
+> MSMQReceiver C:\ProgramData\docker\CredentialSpecs\MSMQReceiver.json
 > ```
+
+#### General Testing and Troubleshoot for a GMSA Account
+
+When running your container, set host name to the same as the name of the gMSA. 
+See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
+
+```powershell
+docker run -h MSMQSend -it --security-opt "credentialspec=file://MSMQSend.json" microsoft/windowsservercore:1803 cmd
+```
+
+From in the container run:
+
+```cmd
+nltest.exe /query
+nltest.exe /parentdomain
+nltest.exe /sc_verify:<parent domain e.g. win.local>
+```
+This should return the DC name and verify connectivity.
+
+```cmd
+net config workstation
+```
+This one should have some print out that shows computer name of the GMSA account.
+
+## Advanced Debugging for Kerberos
+
+Kerberos ticket check. From inside the container, run:
+
+```powershell
+klist
+```
+This should return a success message.
