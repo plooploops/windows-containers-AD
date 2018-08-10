@@ -16,9 +16,10 @@ FROM myplooploops/windows-ad:msmq-base-1803
 
 WORKDIR /Receiver
 COPY --from=build-agent C:\out\ .
+COPY MSMQPersistentVolume\MSMQPersistentVolumeReceiverTest\start.ps1 .
 
 # RUN $msmqreceive = Start-Process MSMQReceiverTest.exe -PassThru; `
 #     Start-Sleep -Seconds 10; `
 #     Stop-Process -InputObject $msmqreceive;
 
-ENTRYPOINT .\MSMQReceiverTest.exe
+ENTRYPOINT .\start.ps1

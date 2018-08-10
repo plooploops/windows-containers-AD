@@ -12,6 +12,7 @@ $env:trace_level=3
 set-itemproperty HKLM:\software\microsoft\msmq\Parameters\ -name UseDSPredefinedEP -value "1"
 set-itemproperty HKLM:\software\microsoft\msmq\Parameters\ -name MsmqDSRpcIpPort -value "2879"
 
+get-msmqqueue
 .\MSMQReceiver.exe
 #spin wait for entrypoint purposes.
 while($true) { Start-Sleep -Seconds 1 }; 
