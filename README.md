@@ -499,6 +499,10 @@ docker run --name=persistent_volume_receiver_test_azure_file --security-opt "cre
 
 ![Persistent volume both containers.](media/persistent-volume-azure-file/result.png 'Both Containers Detached')
 
+If we stop the sender (use docker stop), then we should see the receiver pull messages off the queue.
+
+![Persistent volume both containers.](media/persistent-volume-azure-file/result-stop-sender.png 'Stopped Sender')
+
 ***
 ## Todo
 Explore if we can reach a private queue on a separate host and other hosting mechanisms
