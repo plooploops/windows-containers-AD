@@ -87,7 +87,7 @@ We will also want to verify the bootstrapped data will exist in the mount once w
 From the host we should see the smbmapping.
 Check **C:\smbmappings\msmqsharesa-msmq-share\sender** and **C:\smbmappings\msmqsharesa-msmq-share\receiver**.
 
-![Persistent volume data.](../../media/persistent-volume-azure-file/vm-smb-mapping.png 'Queue Data')
+![Persistent volume data.](./media/persistent-volume-azure-file/vm-smb-mapping.png 'Queue Data')
 
 We can also check the Azure Portal to see mapped data.
 ![Persistent volume data.](../../media/persistent-volume-azure-file/azure-file-bootstrap.png 'Queue Data')
