@@ -1,5 +1,5 @@
 
-### MSMQ Persistent Volume on Host
+### MSMQ with Persistent Volumes on Host
 
 We will mount a persistent volume to the host (could be a Windows VM, Azure Windows VM) so that the private queue (e.g. .\private$\testQueue) will have the data stored in the mount.
 
@@ -69,36 +69,3 @@ Run the receiver.
 docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQRec -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --ip 172.31.230.92 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test powershell
 ```
 
-## Other Notes
-
-Tried these commands to set up delegation:
-
-```powershell
-Set-ADServiceAccount -Identity frontend -TrustedForDelegation $true
-Set-ADServiceAccount -Identity backend -TrustedForDelegation $true
-$impersonation = Get-ADServiceAccount -Identity frontend
-Set-ADServiceAccount backend -PrincipalsAllowedToDelegateToAccount $impersonation
-Set-ADServiceAccount -identity backend -replace @{userAccountControl=16781312}
-```
-
-Can validate delegation is set up with (https://blogs.uw.edu/kool/2016/10/26/kerberos-delegation-in-active-directory/):
-
-```powershell
-$filter = "(userAccountControl=16781312)"
-$objects = Get-ADObject -LDAPFilter $filter
-$objects | select Name
-```
-
-```powershell
-//This is the code to do delegation in code.  Need to have delegation setup properly otherwise it will not work.  and these calls will fail.
-PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
-                UserPrincipal curUser = UserPrincipal.FindByIdentity(ctx, Request.LogonUserIdentity.Name);
-                //WindowsIdentity wi = new WindowsIdentity(curUser.UserPrincipalName);
-                WindowsIdentity wi = (WindowsIdentity)Request.LogonUserIdentity;
-                WindowsImpersonationContext wCtx = wi.Impersonate(); 
-
-if (wCtx != null)
-{
-   wCtx.Undo();
-}
-```
