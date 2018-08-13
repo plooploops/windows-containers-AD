@@ -1,11 +1,11 @@
 
-### MSMQ Monolith
+## MSMQ Monolith
 
 We will want to run the MSMQ Monolith container.  Conceptually, we're going to use a private queue that will be accessible from within the container by both the sender and receiver applications.
 
 The queue by default will be located at .\private$\testQueue.
 
-![Monolith with private queue.](../media/monolith/scenario.png 'Monolith')
+![Monolith with private queue.](../../media/monolith/scenario.png 'Monolith')
 
 ```powershell
 docker run -it <my-repo>/windows-ad:msmq-monolith-test
@@ -29,5 +29,5 @@ docker exec -it <my-container-id> powershell
 C:\Receiver\MSMQReceiverTest.exe
 ```
 
-![Test Success.](media/monolith/successful-test.png 'Monolith test')
+![Test Success.](../../media/monolith/successful-test.png 'Monolith test')
 
