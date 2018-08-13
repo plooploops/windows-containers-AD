@@ -87,16 +87,16 @@ We will also want to verify the bootstrapped data will exist in the mount once w
 From the host we should see the smbmapping.
 Check **C:\smbmappings\msmqsharesa-msmq-share\sender** and **C:\smbmappings\msmqsharesa-msmq-share\receiver**.
 
-![Persistent volume data.](media/persistent-volume-azure-file/vm-smb-mapping.png 'Queue Data')
+![Persistent volume data.](../../media/persistent-volume-azure-file/vm-smb-mapping.png 'Queue Data')
 
 We can also check the Azure Portal to see mapped data.
-![Persistent volume data.](media/persistent-volume-azure-file/azure-file-bootstrap.png 'Queue Data')
+![Persistent volume data.](../../media/persistent-volume-azure-file/azure-file-bootstrap.png 'Queue Data')
 
 We should see the **storage** and **mapping** folders in the **receiver** folder.
-![Persistent volume data.](media/persistent-volume-azure-file/azure-file-bootstrap-receiver.png 'Queue Data')
+![Persistent volume data.](../../media/persistent-volume-azure-file/azure-file-bootstrap-receiver.png 'Queue Data')
 
 We should see the **storage** and **mapping** folders in the **sender** folder.
-![Persistent volume data.](media/persistent-volume-azure-file/azure-file-bootstrap-sender.png 'Queue Data')
+![Persistent volume data.](../../media/persistent-volume-azure-file/azure-file-bootstrap-sender.png 'Queue Data')
 
 
 #### Running the scenario
@@ -107,7 +107,7 @@ We can verify the permissions on the folder in PowerShell.
 Get-ACL C:\<local volume mount>
 ```
 
-![Peristent volume permissions.](media/persistent-volume/permissions.PNG 'Permissions')
+![Peristent volume permissions.](../../media/persistent-volume/permissions.PNG 'Permissions')
 
 We'll want to run the containers next and point them to the **local volume mount**.
 
@@ -124,11 +124,11 @@ Run the receiver.
 docker run --name=persistent_volume_receiver_test_azure_file --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\smbmappings\msmqsharesa-msmq-share\receiver:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test"
 ```
 
-![Persistent volume both containers.](media/persistent-volume-azure-file/result.png 'Both Containers Detached')
+![Persistent volume both containers.](../../media/persistent-volume-azure-file/result.png 'Both Containers Detached')
 
 If we stop the sender (use docker stop), then we should see the receiver pull messages off the queue.
 
-![Persistent volume both containers.](media/persistent-volume-azure-file/result-stop-sender.png 'Stopped Sender')
+![Persistent volume both containers.](../../media/persistent-volume-azure-file/result-stop-sender.png 'Stopped Sender')
 
 ***
 ## Todo
