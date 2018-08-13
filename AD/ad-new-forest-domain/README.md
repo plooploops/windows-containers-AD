@@ -30,7 +30,7 @@ If you manually promoted a VM to be a domain controller without using the deploy
 
 #### Add KDS Root Key
 
->> Don't do this in production.  See https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/jj128430(v=ws.11) for production deployments.
+> Don't do this in production.  See https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/jj128430(v=ws.11) for production deployments.
 
 ```powershell
 Add-KdsRootKey -EffectiveTime ((get-date).addhours(-10))
@@ -62,4 +62,4 @@ $user1 = Get-ADUser User1
 $usergroup = New-ADGroup -GroupCategory Security -DisplayName "Web Authorized Users" -Name WebUsers -GroupScope Universal
 $usergroup | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
 ```
-Once the domain controller is completed, you can join additional member servers (worker1, worker2, etc) to act as the container host machines.
+Once the domain controller is completed, you can [join additional member servers](AD/vm-domain-join/README.md) (worker1, worker2, etc) to act as the container host machines.

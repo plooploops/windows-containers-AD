@@ -19,3 +19,5 @@ az group deployment create --name add-domain -g windows-container-ad \
 You should be able to remote into the domain joined vm using admin user to test that it is domain joined.  These machines should be added to the Worker VM OU and become members of the "container hosts" AD Group.  You must **Reboot** the container host machine (worker1 in this example) after it is added to the "Container Hosts" security group so it has access to the GMSA account passwords in the future.
 
 > Need to add powershell steps here
+
+

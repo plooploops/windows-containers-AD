@@ -5,7 +5,7 @@ We will want to run the MSMQ Monolith container.  Conceptually, we're going to u
 
 The queue by default will be located at .\private$\testQueue.
 
-![Monolith with private queue.](media/monolith/scenario.png 'Monolith')
+![Monolith with private queue.](../media/monolith/scenario.png 'Monolith')
 
 ```powershell
 docker run -it <my-repo>/windows-ad:msmq-monolith-test
