@@ -37,7 +37,7 @@ We can verify the permissions on the folder in PowerShell.
 Get-ACL C:\<local volume mount>
 ```
 
-![Peristent volume permissions.](media/persistent-volume/permissions.PNG 'Permissions')
+![Peristent volume permissions.](../../media/persistent-volume/permissions.PNG 'Permissions')
 
 We'll want to run the containers next and point them to the local volume mount.
 
@@ -60,18 +60,18 @@ If we're using **NAT network driver**, it might look something like this:
 Run the sender.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
 ```
 
 Run the receiver.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQRec -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --ip 172.31.230.92 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test powershell
+docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQRec -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --ip 172.31.230.92 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test powershell
 ```
 
 
 ![Persistent volume both containers.](../../media/persistent-volume/together.png 'Both Containers Interactive')
 
-We can also stop the Sender container (docker stop <container id>), and then the Receiver container should have less messages.
+We can also stop the Sender container (docker stop [container id]), and then the Receiver container should have less messages.
 
 ![Persistent volume only receiver containers.](../../media/persistent-volume/only-receiver.png 'Only receiver container Interactive')

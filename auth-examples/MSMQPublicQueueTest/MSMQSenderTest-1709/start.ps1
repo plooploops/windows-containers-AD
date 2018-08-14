@@ -1,7 +1,7 @@
 Uninstall-windowsfeature msmq-directory
 Install-windowsfeature msmq-directory
 set-itemproperty hklm:\software\microsoft\msmq\parameters -name workgroup -value 0
-Restart-service msmq
+# Restart-service msmq
 get-itemproperty hklm:\software\microsoft\msmq\parameters -name workgroup
 Cd "C:\Program Files\Microsoft Visual Studio 15.0\Common7\IDE\Remote Debugger\x64\"
 .\msvsmon.exe /nostatus /silent /noauth /anyuser /nosecuritywarn /FallbackLoadRemoteManagedPdbs

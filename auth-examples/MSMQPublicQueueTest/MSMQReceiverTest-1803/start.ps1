@@ -1,11 +1,12 @@
 Uninstall-windowsfeature msmq-directory
 Install-windowsfeature msmq-directory
 set-itemproperty hklm:\software\microsoft\msmq\parameters -name workgroup -value 0
-Restart-service msmq
+# Restart-service msmq
 get-itemproperty hklm:\software\microsoft\msmq\parameters -name workgroup
 Cd "C:\Program Files\Microsoft Visual Studio 15.0\Common7\IDE\Remote Debugger\x64\"
 .\msvsmon.exe /nostatus /silent /noauth /anyuser /nosecuritywarn /FallbackLoadRemoteManagedPdbs
 Cd C:\Receiver
+#this should still be checked by docker, perhaps use -e flag.
 $env:queue_name='msmqhost1803\msmqhost-q-1803-TA'
 $env:trace_level=3
 # $env:user='MSMQsend$'
