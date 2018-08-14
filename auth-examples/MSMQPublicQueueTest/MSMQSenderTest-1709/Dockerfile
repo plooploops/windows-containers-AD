@@ -22,4 +22,4 @@ COPY MSMQPublicQueueTest\MSMQSenderTest-1709\start.ps1 .
 #     Start-Sleep -Seconds 10; `
 #     Stop-Process -InputObject $msmqsend;
 
-ENTRYPOINT .\MSMQSenderTest.exe
+ENTRYPOINT .\start.ps1
