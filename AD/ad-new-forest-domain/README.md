@@ -14,8 +14,8 @@ The required AD roles will be installed by using DSC and calling the CerateADPDC
 az group create -n windows-container-ad -l eastus
 
 az group deployment create --name addeploy -g windows-container-ad \
-    --template-file "AD/active-directory-new-domain/azuredeploy.json" \
-    --parameters "AD/active-directory-new-domain/azuredeploy.parameters.json" \
+    --template-file "AD/ad-new-forest-domain/azuredeploy.json" \
+    --parameters "AD/ad-new-forest-domain/azuredeploy.parameters.json" \
     --parameters adminPassword='<password>'
 ```
 

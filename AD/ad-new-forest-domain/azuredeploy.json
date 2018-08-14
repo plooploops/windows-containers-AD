@@ -31,14 +31,14 @@
       "metadata": {
         "description": "The location of resources, such as templates and DSC modules, that the template depends on"
       },
-      "defaultValue": "https://raw.githubusercontent.com/plooploops/windows-containers-msmq/jennelle/AD/active-directory-new-domain/"
+      "defaultValue": "https://raw.githubusercontent.com/plooploops/windows-containers-msmq/master/AD/ad-new-forest-domain/"
     },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
         "description": "The location of resources, such as templates and DSC modules, that the template depends on"
       },
-      "defaultValue": "https://raw.githubusercontent.com/plooploops/windows-containers-msmq/jennelle/AD/active-directory-new-domain/"
+      "defaultValue": "https://raw.githubusercontent.com/plooploops/windows-containers-msmq/master/AD/ad-new-forest-domain/"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -65,21 +65,10 @@
     "adLBName": "adLoadBalancer",
     "storageAccountType": "Standard_LRS",
     "dcCustomScriptFileToRun": "domainbasics.ps1",
-    "dcCustomScriptFileUri": "[concat(parameters('gitlocation'), variables('dcCustomScriptFileToRun'))]",
+    "dcCustomScriptFileUri": "[concat(parameters('_artifactsLocation'), variables('dcCustomScriptFileToRun'))]",
     "dcCommandToExecute": "[concat('powershell.exe -File', ' ', variables('dcCustomScriptFileToRun'))]"
   },
   "resources": [
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
-      "apiVersion": "2016-01-01",
-      "location": "[resourceGroup().location]",
-      "sku": {
-        "name": "Standard_LRS"
-      },
-      "kind": "Storage",
-      "properties": {}
-    },
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('publicIPAddressName')]",
@@ -98,7 +87,7 @@
       "apiVersion": "2017-03-30",
       "location": "[resourceGroup().location]",
       "properties": {
-        "platformFaultDomainCount": 3,
+        "platformFaultDomainCount": 2,
         "platformUpdateDomainCount": 2
       },
       "sku": {
@@ -112,7 +101,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), 'nestedtemplates/vnet.json', parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
