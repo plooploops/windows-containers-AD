@@ -111,14 +111,14 @@ Get-ACL C:\<local volume mount>
 
 We'll want to run the containers next and point them to the **local volume mount**.
 
-Run the sender.
+Run the **sender**.
 
 ```powershell
 #make a sender
 docker run --name=persistent_volume_sender_test_azure_file --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\smbmappings\msmqsharesa-msmq-share\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' "$repo/windows-ad:msmq-persistent-volume-sender-test"
 ```
 
-Run the receiver.
+Run the **receiver**.
 ```
 #make a receiver
 docker run --name=persistent_volume_receiver_test_azure_file --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\smbmappings\msmqsharesa-msmq-share\receiver:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test"

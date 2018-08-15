@@ -71,6 +71,7 @@ start-Sleep -Seconds 2
 Remove-Item $bootstrapvolumepath -Force -Recurse
 
 #example runs
+# docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -it -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' -e TRACE_LEVEL=1 "$repo/windows-ad:msmq-persistent-volume-sender-test"
 
 #make a sender
 docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' "$repo/windows-ad:msmq-persistent-volume-sender-test"

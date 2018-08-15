@@ -23,7 +23,9 @@ namespace MSMQReceiverTest
                 try
                 {
                     Message msg = msmqHelper.ReceiveMessage(queueName, directFormatProtocol);
+                    Console.WriteLine(Constants.TRACE_LINE_BREAK);
                     Console.WriteLine(String.Format("Received a message {0}", msg.Body));
+                    Console.WriteLine(Constants.TRACE_LINE_BREAK);
                 }
                 catch (Exception ex)
                 {

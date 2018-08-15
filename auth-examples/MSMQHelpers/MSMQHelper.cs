@@ -156,12 +156,16 @@ namespace MSMQHelpers
             return (privateQueue) ? string.Format("{0}\\private$\\{1}", machineName, qname) : string.Format("{0}\\{1}", machineName, qname);
         }
 
-        public MessageQueue GetMessageQueue(string path, bool sharedModeDenyReceive = false, bool enableCache = false, QueueAccessMode accessMode = QueueAccessMode.SendAndReceive){
+        public MessageQueue GetMessageQueue(string path, bool sharedModeDenyReceive = false, bool enableCache = false, QueueAccessMode accessMode = QueueAccessMode.SendAndReceive)
+        {
 
             MessageQueue mq = new MessageQueue(path, sharedModeDenyReceive, enableCache, accessMode);
-            Console.WriteLine("Set up Message Queue: " + mq.Path);
-            Console.WriteLine("Access Mode" + mq.AccessMode);
-            Console.WriteLine("Deny Shared Receive" + mq.DenySharedReceive);
+            if (Trace >= TraceLevel.Info)
+            {
+                Console.WriteLine("Set up Message Queue: " + mq.Path);
+                Console.WriteLine("Access Mode" + mq.AccessMode);
+                Console.WriteLine("Deny Shared Receive" + mq.DenySharedReceive);
+            }
             return mq;
         }
 
@@ -183,6 +187,7 @@ namespace MSMQHelpers
                     //sb.AppendLine("Registry Key Value: " + RegistryHelper.GetRegistryValue(Constants.REGISTRY_HKLM, Constants.REGISTRY_MSMQ_PARAMETERS, Constants.REGISTRY_MSMQ_WORKGROUP));
 
                     Console.WriteLine(sb.ToString());
+                    Console.WriteLine("Checking for queue existance " + qname);
                     if (!MessageQueue.Exists(qname))
                     {
                         Console.WriteLine("Queue doesn't exist so we will create one.");
@@ -208,6 +213,7 @@ namespace MSMQHelpers
                         //sb.AppendLine("Registry Key Value: " + RegistryHelper.GetRegistryValue(Constants.REGISTRY_HKLM, Constants.REGISTRY_MSMQ_PARAMETERS, Constants.REGISTRY_MSMQ_WORKGROUP));
 
                         Console.WriteLine(sb.ToString());
+                        Console.WriteLine("Checking for queue existance " + qname);
                         if (!MessageQueue.Exists(qname))
                         {
                             Console.WriteLine("Queue doesn't exist so we will create one.");
@@ -225,8 +231,9 @@ namespace MSMQHelpers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("issue with sending message.");
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("issue with creating the queue.");
+                if (Trace >= TraceLevel.Info)
+                    Console.WriteLine(ex.ToString());
             }
         }
 
@@ -252,14 +259,15 @@ namespace MSMQHelpers
                     msg.BodyStream = new MemoryStream(Encoding.ASCII.GetBytes(messageBody));
                     msg.Label = label;
                     msg.UseDeadLetterQueue = true;
-                    MessageQueue mq = GetMessageQueue(qname, accessMode: QueueAccessMode.PeekAndAdmin);
-                    Console.WriteLine(GetQueueMetadata(qname));
-                    mq.Close();
-                    mq.Dispose();
-                    
+
+                    //Log metadata with both qname 
+                    LogQueueMetadata(qname);
+                    //Log Metadata with direct format name (permissions issue?)
+                    // LogQueueMetadata(directFormatName);
+
                     //send with direct format name
                     Console.WriteLine(String.Format("Send with Direct Format Queue Name: {0}", directFormatName));
-                    mq = GetMessageQueue(directFormatName, accessMode: QueueAccessMode.Send);
+                    MessageQueue mq = GetMessageQueue(directFormatName, accessMode: QueueAccessMode.Send);
                     mq.Send(msg, MessageQueueTransactionType.Single);
                     mq.Close();
                     mq.Dispose();
@@ -279,14 +287,15 @@ namespace MSMQHelpers
                         msg.BodyStream = new MemoryStream(Encoding.ASCII.GetBytes(messageBody));
                         msg.Label = label;
                         msg.UseDeadLetterQueue = true;
-                        MessageQueue mq = GetMessageQueue(qname, accessMode: QueueAccessMode.PeekAndAdmin);
-                        Console.WriteLine(GetQueueMetadata(qname));
-                        mq.Close();
-                        mq.Dispose();
+
+                        //Log metadata with both qname 
+                        LogQueueMetadata(qname);
+                        //Log Metadata with direct format name (permissions issue?)
+                        // LogQueueMetadata(directFormatName);
 
                         //send with direct format name
                         Console.WriteLine(String.Format("Send with Direct Format Queue Name: {0}", directFormatName));
-                        mq = GetMessageQueue(directFormatName, accessMode: QueueAccessMode.Send);
+                        MessageQueue mq = GetMessageQueue(directFormatName, accessMode: QueueAccessMode.Send);
                         mq.Send(msg, MessageQueueTransactionType.Single);
                         mq.Close();
                         mq.Dispose();
@@ -296,7 +305,8 @@ namespace MSMQHelpers
             catch (Exception ex)
             {
                 Console.WriteLine("issue with sending message.");
-                Console.WriteLine(ex.ToString());
+                if (Trace >= TraceLevel.Info)
+                    Console.WriteLine(ex.ToString());
             }
         }
 
@@ -367,11 +377,26 @@ namespace MSMQHelpers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("issue with sending message.");
-                Console.WriteLine(ex.ToString());
+                Console.WriteLine("issue with receiving message.");
+                if (Trace >= TraceLevel.Info)
+                    Console.WriteLine(ex.ToString());
             }
 
             return msg;
+        }
+
+        public void LogQueueMetadata(string qname)
+        {
+            try
+            {
+                Console.WriteLine(GetQueueMetadata(qname));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("issue with pulling metadata.");
+                if (Trace >= TraceLevel.Info)
+                    Console.WriteLine(ex.ToString());
+            }
         }
 
         public string GetQueueMetadata(string qname)
@@ -438,6 +463,10 @@ namespace MSMQHelpers
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Issue with retrieving metadata");
+                if (Trace >= TraceLevel.Info)
+                    Console.WriteLine(ex.ToString());
+
                 ret = ex.Message;
             }
 
