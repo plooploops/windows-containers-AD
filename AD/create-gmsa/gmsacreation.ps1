@@ -1,7 +1,7 @@
 # FOR MSMQ Scenarios ONLY #
 
 #MSMQSend gMSA - Receiver on Worker 2
-New-ADServiceAccount -Name MSMQSend -DNSHostName MSMQSend.win.local -ServicePrincipalNames http/MSMQSend -PrincipalsAllowedToRetrieveManagedPassword "Domain Controllers", "domain admins", "CN=containerhosts,CN=users,DC=win,DC=local" -KerberosEncryptionType RC4, AES128, AES256
+New-ADServiceAccount -Name MSMQSend -DNSHostName MSMQSend.win.local -ServicePrincipalNames host/MSMQSend -PrincipalsAllowedToRetrieveManagedPassword "Domain Controllers", "domain admins", "CN=containerhosts,CN=users,DC=win,DC=local" -KerberosEncryptionType RC4, AES128, AES256
 Set-ADServiceAccount -Identity MSMQSend -replace @{ServicePrincipalName='host/MSMQSend','MQQB/MSMQSend','RPC/MSMQSend','TCP/MSMQSend','UDP/MSMQSend'}
 Set-ADServiceAccount -Identity MSMQSend -PrincipalsAllowedToRetrieveManagedPassword 'domain admins','domain controllers','containerhosts'
 Set-ADServiceAccount -identity MSMQSend -replace @{'msDS-AllowedToDelegateTo'='host/worker2.win.local','LDAP/adVM.win.local','HTTP/worker1.win.local','HTTP/worker2.win.local','HTTP/vsvm.win.local', 'RPC/worker1.win.local', 'RPC/worker2.win.local'}

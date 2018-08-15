@@ -13,8 +13,8 @@ New-ADUser -Name User1 -PasswordNeverExpires $true -AccountPassword ("Password12
 $user1 = Get-ADUser User1
 New-ADUser -Name User2 -PasswordNeverExpires $true -AccountPassword ("Password123!" | ConvertTo-SecureString -AsPlainText -Force) -Enabled $true -UserPrincipalName User2@win.local
 $user2 = Get-ADUser User2
-New-ADUser -Name User3 -PasswordNeverExpires $true -AccountPassword ("Password123!" | ConvertTo-SecureString -AsPlainText -Force) -Enabled $true -UserPrincipalName User2@win.local
-$user2 = Get-ADUser User3
+New-ADUser -Name User3 -PasswordNeverExpires $true -AccountPassword ("Password123!" | ConvertTo-SecureString -AsPlainText -Force) -Enabled $true -UserPrincipalName User3@win.local
+$user3 = Get-ADUser User3
 
 
 
