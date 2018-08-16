@@ -11,7 +11,7 @@ When you create the gMSA accounts, you will set some specific attributes that ar
 1. -ServicePrincipalNames = SPNs set on the service account which will determine what protocol requests it will listen for.  MQQB, RPC, TCP and UDP are all protocols used by MSMQ.
 1. -PrincipalsAllowedToRetrieveManagedPassword = By including the "containerhosts" security group, all the worker VMS will be able to retrieve the password to the gMSA and use it on behalf of the container.
 1. -{userAccountControl=16781312} = A default gMSA account has the user account control set as a WORKSTATION_TRUST_ACCT.  This change adds on the TRUSTED_TO_AUTH_FOR_DELEGATION prpperty. You can read more about this properties at (https://support.microsoft.com/nl-nl/help/305144/how-to-use-the-useraccountcontrol-flags-to-manipulate-user-account-pro)
-1. {msDS-AllowedToDelegateTo} =
+1. {msDS-AllowedToDelegateTo} = The gMSA account will be able to be used by the downstream hosts in this list. 
 
 #### Test GMSA access from Container Host VM (Optional)
 Remote into worker machine (woker1 vm) and ** Switch to PowerShell**.  When you login it defaults to cmd.
