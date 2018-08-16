@@ -11,8 +11,8 @@ For each VM you wish to create run:
 
 ```powershell
 az group deployment create --name add-domain -g windows-container-ad \
-    --template-file "AD/201-vm-domain-join/azuredeploy.json" \
-    --parameters "AD/201-vm-domain-join/azuredeploy.parameters.json" \
+    --template-file "AD/vm-domain-join/azuredeploy.json" \
+    --parameters "AD/vm-domain-join/azuredeploy.parameters.json" \
     --parameters domainPassword='<password>' vmAdminPassword='<password>' dnsLabelPrefix=worker1
 ```
 
