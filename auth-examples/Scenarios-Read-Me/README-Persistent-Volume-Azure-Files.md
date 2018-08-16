@@ -10,6 +10,7 @@ Note that this is just a **test** and while this can help with **lift and shift*
 
 These will describe some of the concepts that we're using in this scenario.
 
+1. [MSMQ MQQB Protocol](https://winprotocoldoc.blob.core.windows.net/productionwindowsarchives/MS-MQQB/[MS-MQQB].pdf)
 1. [Azure Files](https://docs.microsoft.com/en-us/azure/storage/files/storage-how-to-use-files-windows)
 1. [Install Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest)
 1. [Install Azure RM for Powershell](https://docs.microsoft.com/en-us/powershell/azure/install-azurerm-ps?view=azurermps-6.5.0)

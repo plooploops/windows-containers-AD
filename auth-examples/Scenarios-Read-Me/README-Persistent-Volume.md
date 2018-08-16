@@ -9,6 +9,7 @@ We will mount a persistent volume to the host (could be a Windows VM, Azure Wind
 
 These will describe some of the concepts that we're using in this scenario.
 
+1. [MSMQ MQQB Protocol](https://winprotocoldoc.blob.core.windows.net/productionwindowsarchives/MS-MQQB/[MS-MQQB].pdf)
 1. [Windows Containers Networking](https://blogs.technet.microsoft.com/virtualization/2016/05/05/windows-container-networking/)
 1. [Windows Containers Volumes](https://docs.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/container-storage)
 
