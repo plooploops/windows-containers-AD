@@ -27,8 +27,7 @@ It will grant **permissions** for **everyone** on that folder (this is just a te
 
 We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
 
-![Persistent volume data.]
-(media/persistent-volume/volume-mount-data.png 'Queue Data')
+![Persistent volume data.](media/persistent-volume/volume-mount-data.png 'Queue Data')
 
 #### Running the scenario
 
