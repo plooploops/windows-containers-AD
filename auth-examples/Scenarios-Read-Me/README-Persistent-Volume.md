@@ -37,7 +37,7 @@ We can verify the permissions on the folder in PowerShell.
 Get-ACL C:\<local volume mount>
 ```
 
-![Peristent volume permissions.](../../media/persistent-volume/folder-permissions.png 'Permissions')
+![Persistent volume permissions.](../../media/persistent-volume/folder-permissions.png 'Permissions')
 
 We'll want to run the containers next and point them to the local volume mount.
 
