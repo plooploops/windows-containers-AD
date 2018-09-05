@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "eastus"
+        },
+        "virtualMachineName": {
+            "value": "sqlserver2"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_D2s_v3"
+        },
+        "adminUsername": {
+            "value": "sysadmin"
+        },
+        "virtualNetworkName": {
+            "value": "adVNET"
+        },
+        "networkInterfaceName": {
+            "value": "sqlserver2"
+        },
+        "networkSecurityGroupName": {
+            "value": "sqlserver2-nsg"
+        },
+        "adminPassword": {
+            "value": null
+        },
+        "diagnosticsStorageAccountName": {
+            "value": "winconiisdiag497"
+        },
+        "diagnosticsStorageAccountType": {
+            "value": "Standard_LRS"
+        },
+        "diagnosticsStorageAccountKind": {
+            "value": "Storage"
+        },
+        "diagnosticsStorageAccountId": {
+            "value": "Microsoft.Storage/storageAccounts/winconiisdiag497"
+        },
+        "subnetName": {
+            "value": "adSubnet"
+        },
+        "publicIpAddressName": {
+            "value": "sqlserver-ip2"
+        },
+        "publicIpAddressType": {
+            "value": "Dynamic"
+        },
+        "publicIpAddressSku": {
+            "value": "Basic"
+        },
+        "sqlConnectivityType": {
+            "value": "Private"
+        },
+        "sqlPortNumber": {
+            "value": 1433
+        },
+        "sqlStorageDisksCount": {
+            "value": 1
+        },
+        "sqlStorageWorkloadType": {
+            "value": "GENERAL"
+        },
+        "sqlStorageDisksConfigurationType": {
+            "value": "NEW"
+        },
+        "sqlStorageStartingDeviceId": {
+            "value": 2
+        },
+        "sqlStorageDeploymentToken": {
+            "value": 85899
+        },
+        "sqlAutopatchingDayOfWeek": {
+            "value": "Sunday"
+        },
+        "sqlAutopatchingStartHour": {
+            "value": "2"
+        },
+        "sqlAutopatchingWindowDuration": {
+            "value": "60"
+        },
+        "rServicesEnabled": {
+            "value": "false"
+        },
+        "domainToJoin": {
+            "value": "win.local"
+          },
+        "domainUsername": {
+            "value": "winadmin"
+          },
+        "domainPassword": {
+            "value": ""
+          },
+        "domainJoinOptions": {
+            "value": 3
+          },
+        "ouPath": {
+            "value": "OU=Member Servers,DC=win,DC=local" 
+          }
+        
+    }
+}
