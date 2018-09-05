@@ -26,13 +26,6 @@
         "description": "The DNS prefix for the public IP address used by the Load Balancer"
       }
     },
-    "gitlocation": {
-      "type": "string",
-      "metadata": {
-        "description": "The location of resources, such as templates and DSC modules, that the template depends on"
-      },
-      "defaultValue": "https://raw.githubusercontent.com/plooploops/windows-containers-msmq/master/AD/ad-new-forest-domain/"
-    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
