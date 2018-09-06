@@ -19,23 +19,23 @@ SetSPN -l win\MSMQReceiver$
 
 # FOR IIS Scenarios ONLY #
 #frontend GMSA
-New-ADServiceAccount -Name APP1 -DNSHostName app1.win.local -ServicePrincipalNames http/app1 -PrincipalsAllowedToRetrieveManagedPassword "Domain Controllers", "domain admins", "CN=containerhosts,CN=users,DC=win,DC=local" -KerberosEncryptionType RC4, AES128, AES256
+New-ADServiceAccount -Name FRONTEND -DNSHostName frontend.win.local -ServicePrincipalNames http/frontend -PrincipalsAllowedToRetrieveManagedPassword "Domain Controllers", "domain admins", "containerhosts" -KerberosEncryptionType RC4, AES128, AES256
 
-Set-ADServiceAccount -Identity app1 -PrincipalsAllowedToRetrieveManagedPassword 'domain admins','domain controllers','containerhosts'
-Set-ADServiceAccount -identity app1 -replace @{'msDS-AllowedToDelegateTo'='LDAP/adVM.win.local','HTTP/worker1.win.local','HTTP/worker2.win.local','HTTP/vsvm.win.local'}
-Set-ADServiceAccount -identity app1 -replace @{userAccountControl=16781312}
+Set-ADServiceAccount -Identity frontend -PrincipalsAllowedToRetrieveManagedPassword 'domain admins','domain controllers','containerhosts'
+Set-ADServiceAccount -identity frontend -replace @{'msDS-AllowedToDelegateTo'='LDAP/adVM.win.local','HTTP/wrk1.win.local'}
+Set-ADServiceAccount -identity frontend -replace @{userAccountControl=16781312}
 #confirm SPN
-SetSPN -l win\app1$
+SetSPN -l win\frontend$
 
 #backend GMSA
-New-ADServiceAccount -Name APP2 -DNSHostName app2.win.local -ServicePrincipalNames http/app2 -PrincipalsAllowedToRetrieveManagedPassword "Domain Controllers", "domain admins", "CN=containerhosts,CN=users,DC=win,DC=local", "containerhosts" -KerberosEncryptionType RC4, AES128, AES256
+New-ADServiceAccount -Name BACKEND -DNSHostName backend.win.local -ServicePrincipalNames http/backend -PrincipalsAllowedToRetrieveManagedPassword "Domain Controllers", "domain admins", "containerhosts" -KerberosEncryptionType RC4, AES128, AES256
+$impersonation = Get-ADServiceAccount -Identity frontend
 
-$impersonation = Get-ADServiceAccount -Identity app1
-Set-ADServiceAccount -Identity app2 -PrincipalsAllowedToDelegateToAccount $impersonation
-Set-ADServiceAccount -identity app2 -replace @{'msDS-AllowedToDelegateTo'='LDAP/adVM.win.local','HTTP/worker1.win.local','HTTP/worker2.win.local', 'HTTP/vsvm.win.local'}
-Set-ADServiceAccount -identity app2 -replace @{userAccountControl=16781312}
+Set-ADServiceAccount -Identity backend -PrincipalsAllowedToDelegateToAccount $impersonation
+Set-ADServiceAccount -identity backend -replace @{'msDS-AllowedToDelegateTo'='LDAP/adVM.win.local','HTTP/wrk1.win.local'}
+Set-ADServiceAccount -identity backend -replace @{userAccountControl=16781312}
 #confirm SPN
-SetSPN -l win\app2$
+SetSPN -l win\backend$
 
 #Other Possible AD Additions
 $usergroup = New-ADGroup -GroupCategory Security -DisplayName "Web Users" -Name WebUsers -GroupScope Universal

@@ -16,7 +16,7 @@ az group create -n windows-container-ad -l eastus
 az group deployment create --name addeploy -g windows-container-ad \
     --template-file "AD/ad-new-forest-domain/azuredeploy.json" \
     --parameters "AD/ad-new-forest-domain/azuredeploy.parameters.json" \
-    --parameters adminPassword='<password>'
+    --parameters adminPassword=<password>
 ```
 
 You can now Log in with user `win\winadmin`
@@ -38,7 +38,7 @@ Add-KdsRootKey -EffectiveTime ((get-date).addhours(-10))
 
 #### Set up OU for Worker (Container Host) Servers
 
-Set up OU for add VM to domain (thought should be able to use [domain admin but need OU set up](https://github.com/Azure/azure-quickstart-templates/issues/2272)).
+Set up OU for add VM to domain.
 
 ```powershell
 New-ADOrganizationalUnit "WorkerVMs"

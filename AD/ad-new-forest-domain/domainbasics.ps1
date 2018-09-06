@@ -7,6 +7,9 @@ New-ADOrganizationalUnit "WorkerVMs"
 New-ADGroup -GroupCategory Security -DisplayName "Container Hosts" -Name containerhosts -GroupScope Universal
 $containerhosts = Get-ADGroup containerhosts
 
+New-ADOrganizationalUnit "Member Servers"
+
+
 # Create some sample regular users if needed for future testing
 
 New-ADUser -Name User1 -PasswordNeverExpires $true -AccountPassword ("Password123!" | ConvertTo-SecureString -AsPlainText -Force) -Enabled $true -UserPrincipalName User1@win.local
