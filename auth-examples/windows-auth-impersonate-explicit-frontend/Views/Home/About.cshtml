@@ -1,0 +1,92 @@
+﻿@model AdHelpers.AdInfo
+@{
+    ViewBag.Title = "AD info from Web Api (should show as same)";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <p class="lead">
+            You Authenticated on
+            <b> @Model.MachineName </b> using
+            <b> @Model.AuthenticationType  @Model.ImpersonationLevel </b>
+        </p>
+    </div>
+
+    <div class="col-md-8">
+        <ul class="nav nav-tabs">
+            <li><a href="#claims" data-toggle="tab">Claims</a></li>
+            <li><a href="#groups" data-toggle="tab">Groups</a></li>
+            <li><a href="#ldap" data-toggle="tab">ldap</a></li>
+        </ul>
+    </div>
+
+    <div class="tab-content">
+        <div class="tab-pane col-md-8 active" id="claims">
+            <p class="lead">
+                @if (Model.Claims is null)
+                {
+                    <span>No claims avaliable</span>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var claim in @Model.Claims)
+                        {
+                            <li>
+                                <b>@claim.Key</b>: @claim.Value
+                            </li>
+                        }
+                    </ul>
+   
+                }
+            </p>
+        </div>
+
+        <div class="tab-pane col-md-8" id="groups">
+            <p class="lead">
+            @if (Model.Claims is null)
+            {
+                <span>No claims avaliable</span>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var group in Model.Groups)
+                    {
+                        <li>
+                            <b>@group.Name</b>: @group.Value
+                        </li>
+                    }
+                </ul>
+            }
+            </p>
+        </div>
+
+        <div class="tab-pane col-md-8" id="ldap">
+            <p class="lead">
+                @if (!(Model.LDAP is null))
+                {
+                    if (!Model.LDAP.HasError)
+                    {
+                        <b>Connected Server:</b>
+                        @Model.LDAP.ConnectedServer
+                        <br/>
+                        <b>Container: </b>
+                        @Model.LDAP.Container
+                        <br/>
+                        <b>UPN: </b>
+                        @Model.LDAP.UserPrincipalName
+                    }
+                    else
+                    {
+                        @Model.LDAP.ErrorMessage
+                    }
+                }
+                else
+                {
+                    <span>No LDAP message</span>
+                }
+            </p>
+        </div>
+    </div>
+</div>

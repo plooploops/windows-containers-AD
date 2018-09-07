@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Windows Auth Impersonation</h1>
+
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <p class="lead">
+            You Authenticated on
+            <b> @ViewBag.MachineName </b> using
+            <b> @ViewBag.AuthenticationType  @ViewBag.ImpersonationLevel </b>
+        </p>
+    </div>
+
+    <div class="col-md-8">
+        <ul class="nav nav-tabs">
+            <li><a href="#claims" data-toggle="tab">Claims</a></li>
+            <li><a href="#groups" data-toggle="tab">Groups</a></li>
+            <li><a href="#ldap" data-toggle="tab">ldap</a></li>
+        </ul>
+    </div>
+
+    <div class="tab-content">
+        <div class="tab-pane col-md-8 active" id="claims">
+            <p class="lead">
+                <ul>
+                    @foreach (var claim in ViewBag.Claims)
+                    {
+                        <li>
+                            <b>@claim.Type</b>: @claim.Value
+                        </li>
+                    }
+                </ul>
+
+            </p>
+        </div>
+
+        <div class="tab-pane col-md-8" id="groups">
+            <p class="lead">
+                <ul>
+                    @foreach (var group in ViewBag.Groups)
+                    {
+                        <li>
+                            <b>@group.Name</b>: @group.Value
+                        </li>
+                    }
+                </ul>
+            </p>
+        </div>
+
+        <div class="tab-pane col-md-8" id="ldap">
+            <p class="lead">
+                @if (!ViewBag.LdapInfo.HasError)
+                {
+                    <b>Connected Server:</b>
+                    @ViewBag.LdapInfo.ConnectedServer
+                    <br />
+                    <b>Container: </b>
+                    @ViewBag.LdapInfo.Container
+                    <br />
+                    <b>UPN: </b>
+                    @ViewBag.LdapInfo.UserPrincipalName
+                }
+                else
+                {
+                    @ViewBag.LdapInfo.ErrorMessage
+                }
+            </p>
+        </div>
+    </div>
+</div>
