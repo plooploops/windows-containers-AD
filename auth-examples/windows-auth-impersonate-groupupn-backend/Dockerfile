@@ -11,7 +11,7 @@ COPY . C:\src
 RUN msbuild windows-auth-impersonate-groupupn-backend\windows-auth-impersonate-groupupn-backend.csproj /p:OutputPath=C:\out /p:DeployOnBuild=true 
 
 ## final image
-FROM microsoft/aspnet:4.7.1-windowsservercore-1709
+FROM microsoft/aspnet:4.7.2-windowsservercore-1803
 
 RUN powershell.exe Add-WindowsFeature Web-Windows-Auth
 RUN powershell.exe -NoProfile -Command `

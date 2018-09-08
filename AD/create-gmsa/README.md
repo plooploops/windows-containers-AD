@@ -54,6 +54,11 @@ Get-CredentialSpec
 > MSMQReceiver C:\ProgramData\docker\CredentialSpecs\MSMQReceiver.json
 > ```
 
+#### Examine gMSA account properties
+```
+get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToRetrieveManagedPassword','kerberosEncryptionType','ServicePrincipalName','msDS-AllowedToDelegateTo','userAccountControl'
+```
+
 #### General Testing and Troubleshoot for a GMSA Account
 
 When running your container, set host name to the same as the name of the gMSA. 
@@ -84,4 +89,4 @@ Kerberos ticket check. From inside the container, run:
 ```powershell
 klist
 ```
-This should return a success message.
+This should return a success message and any cached kerberos tickets. 
