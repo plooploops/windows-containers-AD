@@ -1,4 +1,4 @@
-FROM myplooploops/dotnet-framework:4.7.2-runtime-windowsservercore-insider:10.0.17666.1000
+FROM myplooploops/dotnet-framework:4.7.2-runtime-windowsservercore-insider-10.0.17666.1000
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
