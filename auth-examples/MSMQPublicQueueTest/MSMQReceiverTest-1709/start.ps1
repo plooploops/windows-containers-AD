@@ -29,6 +29,15 @@ set-itemproperty HKLM:\software\microsoft\msmq\Parameters\ -name UseDSPredefined
 set-itemproperty HKLM:\software\microsoft\msmq\Parameters\ -name MsmqDSRpcIpPort -value "2879"
 
 try {
+    #assumes that DNS is at 10.0.0.4 for CNM plugin
+    set-dnsclientserveraddress -interfaceindex (get-netadapter).IfIndex -serveraddress ("10.0.0.4")
+}
+catch {
+    $ErrorMessage = $_.Exception.Message
+    Write-Host $ErrorMessage
+}
+
+try {
     get-msmqqueue
     cd C:\Receiver
     .\MSMQReceiverTest.exe

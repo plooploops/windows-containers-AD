@@ -1,3 +1,6 @@
+#assumes that DNS is at 10.0.0.4 for CNM plugin
+set-dnsclientserveraddress -interfaceindex (get-netadapter).IfIndex -serveraddress ("10.0.0.4")
+
 Uninstall-windowsfeature msmq-directory
 Install-windowsfeature msmq-directory
 set-itemproperty hklm:\software\microsoft\msmq\parameters -name workgroup -value 0
@@ -27,6 +30,15 @@ $env:trace_level = 3
 # $env:user='MSMQsend$'
 set-itemproperty HKLM:\software\microsoft\msmq\Parameters\ -name UseDSPredefinedEP -value "1"
 set-itemproperty HKLM:\software\microsoft\msmq\Parameters\ -name MsmqDSRpcIpPort -value "2879"
+
+try {
+    #assumes that DNS is at 10.0.0.4 for CNM plugin
+    set-dnsclientserveraddress -interfaceindex (get-netadapter).IfIndex -serveraddress ("10.0.0.4")
+}
+catch {
+    $ErrorMessage = $_.Exception.Message
+    Write-Host $ErrorMessage
+}
 
 try {
     get-msmqqueue
