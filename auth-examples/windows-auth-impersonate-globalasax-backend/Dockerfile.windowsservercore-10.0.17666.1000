@@ -1,5 +1,5 @@
 # escape=`
-FROM jsturtevant/4.7-windowsservercore-1709-builder:latest as build-agent
+FROM myplooploops/4.7.2-windowsservercore-insider-10.0.17666.1000-builder as build-agent
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 # Build files

@@ -8,7 +8,7 @@ docker build -f AspNetBase/Dockerfile -t "$repo/aspnet:4.7.2-windowsservercore-i
 docker build -f IISBase/Dockerfile -t "$repo/iis:windowsservercore-insider-10.0.17666.1000" IISBase
 
 # build the image to use for building apps
-docker build -f web-builder/Dockerfile -t "$repo/4.7-windowsservercore-1709-builder" web-builder
+docker build -f web-builder/Dockerfile -t "$repo/4.7.2-windowsservercore-insider-10.0.17666.1000-builder" web-builder
 
 #build individual apps
 docker build -f no-auth/Dockerfile -t "$repo/windows-ad:no-auth-windowsservercore-insider-10.0.17666.1000" no-auth
