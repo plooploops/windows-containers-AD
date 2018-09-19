@@ -29,10 +29,10 @@ RUN Invoke-WebRequest -UseBasicParsing https://dotnetbinaries.blob.core.windows.
 
 ENV ROSLYN_COMPILER_LOCATION "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\Roslyn"
 
-RUN try { \Windows\Microsoft.NET\Framework64\v4.0.30319\ngen update `
+RUN try { \Windows\Microsoft.NET\Framework64\v4.0.30319\ngen update; `
     # Workaround VS installer/ngen issue with VSWebLauncher
-    && \Windows\Microsoft.NET\Framework\v4.0.30319\ngen uninstall "C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\VSWebLauncher.exe" `
-    && \Windows\Microsoft.NET\Framework\v4.0.30319\ngen update } catch { Write-Host $_.Exception.Message }
+    \Windows\Microsoft.NET\Framework\v4.0.30319\ngen uninstall "C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\VSWebLauncher.exe"; `
+    \Windows\Microsoft.NET\Framework\v4.0.30319\ngen update } catch { Write-Host $_.Exception.Message }
 
 # Set PATH in one layer to keep image size down.
 RUN setx /M PATH $(${Env:PATH} `
