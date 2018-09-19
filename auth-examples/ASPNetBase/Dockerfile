@@ -1,4 +1,4 @@
-FROM myplooploops/4.7.2-windowsservercore-insider-10.0.17666.1000-web-builder
+FROM myplooploops/web-builder:4.7.2-windowsservercore-insider-10.0.17666.1000
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 

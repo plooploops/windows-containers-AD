@@ -10,7 +10,7 @@ docker push "$repo/aspnet:4.7.2-windowsservercore-insider-10.0.17666.1000"
 docker push "$repo/iis:windowsservercore-insider-10.0.17666.1000"
 
 # build the image to use for building apps
-docker push "$repo/4.7.2-windowsservercore-insider-10.0.17666.1000-builder"
+docker push "$repo/web-builder:4.7.2-windowsservercore-insider-10.0.17666.1000"
 
 #IIS
 docker push "$repo/windows-ad:no-auth-windowsservercore-insider-10.0.17666.1000"
