@@ -47,6 +47,6 @@ RUN setx /M PATH $(${Env:PATH} `
 RUN @('4.0', '4.5.2', '4.6.2', '4.7.2') `
     | %{ `
         Invoke-WebRequest -UseBasicParsing https://dotnetbinaries.blob.core.windows.net/referenceassemblies/v${_}.zip -OutFile referenceassemblies.zip; `
-        Expand-Archive referenceassemblies.zip -DestinationPath \"${Env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\"; `
+        Expand-Archive referenceassemblies.zip -DestinationPath \"${Env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\" -force; `
         Remove-Item -Force referenceassemblies.zip; `
     }
