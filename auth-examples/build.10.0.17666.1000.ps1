@@ -4,7 +4,7 @@ param (
 
 #base images
 docker build -f DotNetFrameworkBase/Dockerfile -t "$repo/dotnet-framework:4.7.2-runtime-windowsservercore-insider-10.0.17666.1000" DotNetFrameworkBase
-docker build -f DotNetFrameworkBuilder/Dockerfile -t "$repo/dotnet-framework:4.7.2-runtime-windowsservercore-insider-10.0.17666.1000" DotNetFrameworkBuilder
+docker build -f DotNetFrameworkBuilder/Dockerfile -t "$repo/dotnet-framework-builder:4.7.2-runtime-windowsservercore-insider-10.0.17666.1000" DotNetFrameworkBuilder
 docker build -f AspNetBase/Dockerfile -t "$repo/aspnet:4.7.2-windowsservercore-insider-10.0.17666.1000" AspNetBase
 docker build -f IISBase/Dockerfile -t "$repo/iis:windowsservercore-insider-10.0.17666.1000" IISBase
 

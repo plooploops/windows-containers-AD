@@ -19,7 +19,7 @@ RUN Invoke-WebRequest -UseBasicParsing https://download.visualstudio.microsoft.c
     Remove-Item -Force vs_buildtools.exe; `
     Remove-Item -Force -Recurse \"${Env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\"; `
     Remove-Item -Force -Recurse ${Env:TEMP}\*; `
-    Remove-Item -Force -Recurse \"${Env:ProgramData}\Package Cache\"
+    try { Remove-Item -Force -Recurse \"${Env:ProgramData}\Package Cache\"  } catch { Write-Host $_.Exception.Message }
 
 # Install web targets
 RUN Invoke-WebRequest -UseBasicParsing https://dotnetbinaries.blob.core.windows.net/dockerassets/MSBuild.Microsoft.VisualStudio.Web.targets.2018.05.zip -OutFile MSBuild.Microsoft.VisualStudio.Web.targets.zip;`
@@ -28,11 +28,12 @@ RUN Invoke-WebRequest -UseBasicParsing https://dotnetbinaries.blob.core.windows.
 
 ENV ROSLYN_COMPILER_LOCATION "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\Roslyn"
 # ngen assemblies queued by VS installers - must be done in cmd shell to avoid access issues
-SHELL ["cmd", "/S", "/C"]
-RUN \Windows\Microsoft.NET\Framework64\v4.0.30319\ngen update `
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+RUN try { \Windows\Microsoft.NET\Framework64\v4.0.30319\ngen update; `
     # Workaround VS installer/ngen issue with VSWebLauncher
-    && \Windows\Microsoft.NET\Framework\v4.0.30319\ngen uninstall "C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\VSWebLauncher.exe" `
-    && \Windows\Microsoft.NET\Framework\v4.0.30319\ngen update
+    \Windows\Microsoft.NET\Framework\v4.0.30319\ngen uninstall "C:\Program Files (x86)\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\VSWebLauncher.exe"; `
+    \Windows\Microsoft.NET\Framework\v4.0.30319\ngen update; `
+    } catch { Write-Host $_.Exception.Message }
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
