@@ -5,6 +5,7 @@ param (
 
 #base images
 docker push "$repo/dotnet-framework:4.7.2-runtime-windowsservercore-insider-10.0.17666.1000"
+docker push "$repo/dotnet-framework-builder:4.7.2-runtime-windowsservercore-insider-10.0.17666.1000"
 docker push "$repo/aspnet:4.7.2-windowsservercore-insider-10.0.17666.1000"
 docker push "$repo/iis:windowsservercore-insider-10.0.17666.1000"
 
