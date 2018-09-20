@@ -8,4 +8,4 @@ RUN powershell.exe -NoProfile -Command `
   Set-WebConfigurationProperty -filter /system.WebServer/security/authentication/AnonymousAuthentication -name enabled -value false -PSPath IIS:\ ; `
   Set-WebConfigurationProperty -filter /system.webServer/security/authentication/windowsAuthentication -name enabled -value true -PSPath IIS:\ 
 WORKDIR /inetpub/wwwroot
-COPY windows-auth-impersonate-explicit-frontend\bin\. C:\out\_PublishedWebsites\windows-auth-simple
+COPY windows-auth-impersonate-explicit-frontend C:\out\_PublishedWebsites\windows-auth-simple

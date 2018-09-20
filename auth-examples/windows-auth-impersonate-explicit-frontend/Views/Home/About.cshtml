@@ -17,6 +17,7 @@
             <li><a href="#claims" data-toggle="tab">Claims</a></li>
             <li><a href="#groups" data-toggle="tab">Groups</a></li>
             <li><a href="#ldap" data-toggle="tab">ldap</a></li>
+            <li><a href="#sql" data-toggle="tab">SQL</a></li>
         </ul>
     </div>
 
@@ -76,6 +77,7 @@
                         <br/>
                         <b>UPN: </b>
                         @Model.LDAP.UserPrincipalName
+                        <br />
                     }
                     else
                     {
@@ -85,6 +87,33 @@
                 else
                 {
                     <span>No LDAP message</span>
+                }
+            </p>
+        </div>
+
+        <div class="tab-pane col-md-8" id="ldap">
+            <p class="lead">
+                @if (!(Model.TestData is null))
+                {
+                    if (!Model.LDAP.HasError)
+                    {
+                        <ul>
+                            @foreach (var tuple in Model.TestData)
+                            {
+                                <li>
+                                    <b>@tuple.Item1</b>: @tuple.Item2
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        @Model.LDAP.ErrorMessage
+                    }
+                }
+                else
+                {
+                    <span>No SQL Test Data</span>
                 }
             </p>
         </div>
