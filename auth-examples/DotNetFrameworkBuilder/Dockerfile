@@ -39,6 +39,7 @@ RUN try { \Windows\Microsoft.NET\Framework64\v4.0.30319\ngen update; `
 # Set PATH in one layer to keep image size down.
 RUN setx /M PATH $(${Env:PATH} `
     + \";C:\Windows\Microsoft.NET\Framework64\v4.0.30319\" `
+    + \";${Env:ProgramFiles(x86)}\MSBuild\Microsoft\VisualStudio\v11.0\" `
     + \";${Env:ProgramFiles}\NuGet\" `
     + \";${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\CommonExtensions\Microsoft\TestWindow\" `
     + \";${Env:ProgramFiles(x86)}\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\")

@@ -14,5 +14,6 @@ namespace AdHelpers
         public Dictionary<string, string> Claims { get; set; }
         public List<AdGroup> Groups { get; set; }
         public Ldap LDAP { get; set; }
+        public List<Tuple<string, string>> TestData { get; set; }
     }
 }

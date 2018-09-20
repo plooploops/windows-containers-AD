@@ -21,6 +21,7 @@
     </div>
 
     <div class="tab-content">
+        
         <div class="tab-pane col-md-8 active" id="claims">
             <p class="lead">
                 @if (Model.Claims is null)
@@ -37,28 +38,28 @@
                             </li>
                         }
                     </ul>
-   
+
                 }
             </p>
         </div>
 
         <div class="tab-pane col-md-8" id="groups">
             <p class="lead">
-            @if (Model.Claims is null)
-            {
-                <span>No claims avaliable</span>
-            }
-            else
-            {
-                <ul>
-                    @foreach (var group in Model.Groups)
-                    {
-                        <li>
-                            <b>@group.Name</b>: @group.Value
-                        </li>
-                    }
-                </ul>
-            }
+                @if (Model.Claims is null)
+                {
+                    <span>No claims avaliable</span>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var group in Model.Groups)
+                        {
+                            <li>
+                                <b>@group.Name</b>: @group.Value
+                            </li>
+                        }
+                    </ul>
+                }
             </p>
         </div>
 
@@ -70,12 +71,21 @@
                     {
                         <b>Connected Server:</b>
                         @Model.LDAP.ConnectedServer
-                        <br/>
+                        <br />
                         <b>Container: </b>
                         @Model.LDAP.Container
-                        <br/>
+                        <br />
                         <b>UPN: </b>
                         @Model.LDAP.UserPrincipalName
+                        <br />
+                        <ul>
+                            @foreach (var tuple in Model.TestData)
+                            {
+                                <li>
+                                    <b>@tuple.Item1</b>: @tuple.Item2
+                                </li>
+                            }
+                        </ul>
                     }
                     else
                     {
