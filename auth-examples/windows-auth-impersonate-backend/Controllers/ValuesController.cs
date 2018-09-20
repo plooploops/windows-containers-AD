@@ -35,7 +35,7 @@ namespace windows_auth_impersonate.Controllers
 
                 var identity = UserPrincipal.FindByIdentity(ctx, windowsIdentity.Name);
                 ldapInfo.UserPrincipalName = identity?.UserPrincipalName;
-                var connectionString = Environment.GetEnvironmentVariable("CONNECTION") ?? "Server=SQLSERVER;DataBase=testdb;Integrated Security=SSPI";
+                var connectionString = Environment.GetEnvironmentVariable("CONNECTION") ?? "server=sqlserver.win.local;DataBase=testdb;integrated security=SSPI";
                 testData = (SQLHelper.GetTestData(connectionString, ldapInfo.UserPrincipalName) as List<Tuple<string, string>>);
             }
             catch (Exception ex)
