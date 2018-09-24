@@ -25,7 +25,7 @@ namespace windows_auth_impersonate.Controllers
                 return "not using windows auth.";
             }
 
-            var testData = new List<Tuple<string, string>>();
+            var testData = new List<Result>();
             Ldap ldapInfo = new Ldap();
             try
             {
@@ -36,7 +36,7 @@ namespace windows_auth_impersonate.Controllers
                 var identity = UserPrincipal.FindByIdentity(ctx, windowsIdentity.Name);
                 ldapInfo.UserPrincipalName = identity?.UserPrincipalName;
                 var connectionString = Environment.GetEnvironmentVariable("CONNECTION") ?? "server=sqlserver.win.local;DataBase=testdb;integrated security=SSPI";
-                testData = (SQLHelper.GetTestData(connectionString, ldapInfo.UserPrincipalName) as List<Tuple<string, string>>);
+                testData = SQLHelper.GetTestData(connectionString, ldapInfo.UserPrincipalName);
             }
             catch (Exception ex)
             {

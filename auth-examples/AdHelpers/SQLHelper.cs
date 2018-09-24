@@ -9,9 +9,9 @@ namespace AdHelpers
 {
     public class SQLHelper
     {
-        public static object GetTestData(string connection, string upn = null)
+        public static List<Result> GetTestData(string connection, string upn = null)
         {
-            var res = new List<Tuple<string, string>>();
+            var res = new List<Result>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connection))
@@ -32,7 +32,8 @@ namespace AdHelpers
                         // iterate through results, printing each to console
                         while (rdr.Read())
                         {
-                            res.Add(new Tuple<string, string>(rdr["Name"].ToString(), rdr["Value"].ToString()));
+                            res.Add(new Result { name = rdr["Name"].ToString(), 
+                                                 value = rdr["Value"].ToString()});
                         }
                     }
                 }

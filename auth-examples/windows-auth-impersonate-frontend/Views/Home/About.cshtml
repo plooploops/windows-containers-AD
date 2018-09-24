@@ -99,10 +99,10 @@
                     if (!Model.LDAP.HasError)
                     {
                         <ul>
-                            @foreach (var tuple in Model.TestData)
+                            @foreach (var item in Model.TestData)
                             {
                                 <li>
-                                    <b>@tuple.Item1</b>: @tuple.Item2
+                                    <b>@item.name</b>: @item.value
                                 </li>
                             }
                         </ul>
