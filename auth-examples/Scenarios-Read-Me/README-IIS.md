@@ -1,5 +1,5 @@
 ## IIS Lift and Shift
-
+We'd like to put together an IIS web site and host it in a Windows Container.
 
 #### Links
 
@@ -10,6 +10,26 @@ These will describe some of the concepts that we're using in this scenario.
 1. [IIS on Docker Hub](https://hub.docker.com/r/microsoft/iis/)
 1. [gMSA Windows Containers](https://docs.microsoft.com/en-us/virtualization/windowscontainers/manage-containers/manage-serviceaccounts)
 1. [Deploying Windows Containers](https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/deploy-containers-on-server)
+1. [Version Compatibility](https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility)
+1. [NSG Ports](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nsg-quickstart-portal)
+1. [gMSA Set up Reference](https://gist.github.com/PatrickLang/27c743782fca17b19bf94490cbb6f960)
+1. [Remote Debugging](https://www.richard-banks.org/2017/02/debug-net-in-windows-container.html)
+
+# Host Setup
+
+We'll want to make sure that we're able to run Windows Containers on the appropriate Windows Host.  In this case, we'd want the [version](https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility) to be compatible with the host.
+
+
+We'll also want to open some ports on the container host for testing (this is if we'd like to test from an off network browser.)  We'll use **port 80** for testing purposes.
+
+```
+netsh advfirewall firewall add rule name="Open Port 80" dir=in action=allow protocol=TCP localport=80
+netsh advfirewall firewall add rule name="Open Port 80 out" dir=out action=allow protocol=TCP localport=80
+```
+
+We'll also want to make sure that if this container host is a VM hosted in Azure, that we also open the same ports in the [NSG](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nsg-quickstart-portal).
+
+# Container Running Notes
 
 Set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
 
@@ -73,20 +93,14 @@ klist
 
 should return success message
 
-## Samples
-
-Remote debugging by installing VS debugger in the container. (blog post available)
+# Remote Debugging
+Remote debug by installing VS debugger in the container. [Remote Debugging](.\README-Remote-Debugging.md)
 
 # Samples
 
-To build the samples (using [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)) run the commands below (be sure to use your images in commands for each example).  Alternatively you can use the provided docker images on my docker hub repo.
+We can use the build script to create the samples, or pull from the repo.
 
-**WSL**
-
-```powershell
-./auth-examples/build.sh <your-docker-repo>
-```
-
+## Regular Build
 **Powershell**
 
 ```powershell
@@ -94,158 +108,48 @@ To build the samples (using [WSL](https://docs.microsoft.com/en-us/windows/wsl/i
 ```
 
 To publish to a docker repository:
-
-**WSL**
-
-```powershell
-docker login
-./auth-examples/push.sh <your-docker-repo>
-```
-
-**Powershell**
-
 ```powershell
 docker login
 ./auth-examples/push.ps1 <your-docker-repo>
 ```
+
+## Insider Build
+
+Note on running the insider build, we must be using the matching host for the build environment (e.g. Windows Server 2019) and we must also have an ability to use msbuild.  This can be achieved through a container image (pending) or for now, through an insider image to copy the contents of an already built application.  For now, we can use Visual Studio 2017 https://visualstudio.microsoft.com/vs/community/ to complete the build of the assets, and then run the build / copy script.
+
+```powershell
+./auth-examples/build.10.0.17666.1000-copy.ps1 <your-docker-repo>
+```
+
+To publish to a docker repository:
+
+```powershell
+docker login
+./auth-examples/push.10.0.17666.1000-copy.ps1 <your-docker-repo>
+```
+
+## Run the Insider Build
+
+We'll want a **frontend** container, assuming that we've set up our **frontend insider** gMSA.
+
+```powershell
+docker run -h frontendinsider -d -p 80:80 --security-opt "credentialspec=file://frontendinsider.json" -e API_URL=http://backendinsider.win.local:81 <myrepo>/windows-ad:impersonate-explicit-frontend-windowsservercore-insider-10.0.17666.1000
+```
+
+We'll want a **backend** container, assuming that we've set up our **backend insider** gMSA.
+
+```powershell
+docker run -h backendinsider -d -p 81:80 -p 1433:1433 -p 4020:4020 -p 4021:4021 --security-opt "credentialspec=file://backendinsider.json" -e TEST_GROUP=WebUsers -e CONNECTION='Server=sqlserver.win.local;Database=
+testdb;Integrated Security=SSPI' <myrepo>/windows-ad:impersonate-backend-windowsservercore-insider-10.0.17666.1000
+```
+
 ***
 ## Environment variables
 
-* QUEUE_NAME - This will be the path for the queue.  E.g. for **private queue** .\private$\TestQueue for **public queue** worker\TestQueue
-* DIRECT_FORMAT_PROTOCOL - This will be the direct format protocol.  It can be something like OS, TCP, etc.  See the direct format naming for appropriate protocols.
 * USER - This will search for a UPN to try to impersonate.
+* CONNECTION - This is a connection string used by the **backend** container in order to reach out to a SQL Server.  Note that the container must have network connectivity and the identity (**gMSA account**) used by the container must have rights to the SQL Server. 'Server=sqlserver.win.local;Database=
+testdb;Integrated Security=SSPI' would be a good example.
+* API_URL - This is used by the **frontend** container in order to send requests to a **backend** API.  Note that the port number may change if these contaienrs are hosted in the same box (e.g. backend.win.local:81) 
 
 -----
 
-### MSMQ Monolith
-
-We will want to run the MSMQ Monolith container.  Conceptually, we're going to use a private queue that will be accessible from within the container by both the sender and receiver applications.
-
-The queue by default will be located at .\private$\testQueue.
-
-![Monolith with private queue.](media/monolith/scenario.png 'Monolith')
-
-```powershell
-docker run -it <my-repo>/windows-ad:msmq-monolith-test
-```
-
-We should be able to see the private queue accessible from both the sender and receiver applications.  Since we're in interactive mode, we can also attach to the running container and run the applications separately.
-
-```powershell
-docker run -d <my-repo>/windows-ad:msmq-monolith-test
-```
-
-```powershell
-docker exec -it <my-container-id> powershell
-# run this in the container
-C:\Sender\MSMQSenderTest.exe
-```
-
-```powershell
-docker exec -it <my-container-id> powershell
-# run this in the container
-C:\Receiver\MSMQReceiverTest.exe
-```
-
-![Test Success.](media/monolith/successful-test.png 'Monolith test')
-
-----
-
-### MSMQ Persistent Volume on Host
-
-We will mount a persistent volume to the host (could be a Windows VM, Azure Windows VM) so that the private queue (e.g. .\private$\testQueue) will have the data stored in the mount.
-
-![Persistent volume on host for MSMQ private queue with  sender and receiver containers.](media/persistent-volume/scenario.png 'Persistent Volume')
-
-
-
-#### Prep script
-
-A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with this process, and we'll want to run it on the host.  We will run the containers **sequentially** as each of the containers will have their own queue manager, which will assume ownership of the file mount.  This **prevents two containers** from using the **same volume mount** and running at the **same time**.
-
-```powershell
-.\scripts\persistent-volume-mount-prep.ps1
-```
-
-The script will set up a **local folder** for testing the **volume mount** on the host, for instance C:\msmq.
-
-It will grant **permissions** for **everyone** on that folder (this is just a test).
-
-We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
-
-![Persistent volume data.]
-(media/persistent-volume/volume-mount-data.png 'Queue Data')
-
-#### Running the scenario
-
-We can verify the permissions on the folder in PowerShell.
-
-```powershell
-Get-ACL C:\<local volume mount>
-```
-
-![Peristent volume permissions.](media/persistent-volume/permissions.PNG 'Permissions')
-
-We'll want to run the containers next and point them to the local volume mount.
-
-If we're using **transparent network driver**, it might look something like this:
-
-Run the sender.
-
-```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend --network=tlan2 --dns=10.123.80.123 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
-```
-
-Run the receiver.
-
-```powershell
-docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQRec --network=tlan2 --dns=10.123.80.123 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test powershell
-```
-
-If we're using **NAT network driver**, it might look something like this:
-
-Run the sender.
-
-```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store <my-repo>/windows-ad:msmq-sender-test powershell
-```
-
-Run the receiver.
-
-```powershell
-docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq:c:/Windows/System32/msmq -h MSMQRec -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --ip 172.31.230.92 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test powershell
-```
-
-## Other Notes
-
-Tried these commands to set up delegation:
-
-```powershell
-Set-ADServiceAccount -Identity frontend -TrustedForDelegation $true
-Set-ADServiceAccount -Identity backend -TrustedForDelegation $true
-$impersonation = Get-ADServiceAccount -Identity frontend
-Set-ADServiceAccount backend -PrincipalsAllowedToDelegateToAccount $impersonation
-Set-ADServiceAccount -identity backend -replace @{userAccountControl=16781312}
-```
-
-Can validate delegation is set up with (https://blogs.uw.edu/kool/2016/10/26/kerberos-delegation-in-active-directory/):
-
-```powershell
-$filter = "(userAccountControl=16781312)"
-$objects = Get-ADObject -LDAPFilter $filter
-$objects | select Name
-```
-
-```powershell
-//This is the code to do delegation in code.  Need to have delegation setup properly otherwise it will not work.  and these calls will fail.
-PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
-                UserPrincipal curUser = UserPrincipal.FindByIdentity(ctx, Request.LogonUserIdentity.Name);
-                //WindowsIdentity wi = new WindowsIdentity(curUser.UserPrincipalName);
-                WindowsIdentity wi = (WindowsIdentity)Request.LogonUserIdentity;
-                WindowsImpersonationContext wCtx = wi.Impersonate(); 
-
-if (wCtx != null)
-{
-   wCtx.Undo();
-}
-```

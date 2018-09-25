@@ -58,8 +58,9 @@ namespace windows_auth_impersonate_explicit_frontend.Controllers
             AdInfo adinfo = new AdInfo();
 
             var apiBaseUrl = Environment.GetEnvironmentVariable("API_URL") ?? "http://localhost:60201/";
+            var idToImpersonate = User.Identity; //could also try Request.LogonUserIdentity
             using (System.Security.Principal.WindowsImpersonationContext impersonationContext =
-                    ((System.Security.Principal.WindowsIdentity)Request.LogonUserIdentity).Impersonate())
+                    ((System.Security.Principal.WindowsIdentity)idToImpersonate).Impersonate())
             {
                 var client = new HttpClient(new HttpClientHandler() { UseDefaultCredentials = true });
                 client.BaseAddress = new Uri(apiBaseUrl);
