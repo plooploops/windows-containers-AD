@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using AdHelpers;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace windows_auth_impersonate_explicit_frontend.Controllers
 {
@@ -67,8 +69,10 @@ namespace windows_auth_impersonate_explicit_frontend.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
+                string json = await Task.Run(() => JsonConvert.SerializeObject(new UPNInfo() { UPN = LDAPHelper.GetUPN(idToImpersonate.Name) }));
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.GetAsync("api/values");
+                var response = await client.PostAsync("api/values", content);
                 if (response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();

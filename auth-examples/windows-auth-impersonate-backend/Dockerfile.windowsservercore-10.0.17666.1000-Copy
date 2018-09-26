@@ -1,7 +1,7 @@
 # escape=`
 
 ## final image
-FROM myplooploops/aspnet:4.7.2-windowsservercore-insider-10.0.17666.1000
+FROM myplooploops/aspnet:4.7.2-remote-debugging-vs2017-windowsservercore-insider-10.0.17666.1000
 
 RUN powershell.exe Add-WindowsFeature Web-Windows-Auth
 RUN powershell.exe -NoProfile -Command `

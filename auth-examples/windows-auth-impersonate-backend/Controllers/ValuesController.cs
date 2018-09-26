@@ -66,8 +66,48 @@ namespace windows_auth_impersonate.Controllers
         }
 
         // POST api/values
-        public void Post([FromBody]string value)
+        [HttpPost]
+        public Object Post(UPNInfo upn)
         {
+            var windowsIdentity = User.Identity as WindowsIdentity;
+
+            if (windowsIdentity is null)
+            {
+                return "not using windows auth.";
+            }
+
+            var testData = new List<Result>();
+            Ldap ldapInfo = new Ldap();
+            try
+            {
+                PrincipalContext ctx = new PrincipalContext(ContextType.Domain);
+                ldapInfo.ConnectedServer = ctx.ConnectedServer;
+                ldapInfo.Container = ctx.Container;
+
+                var identity = UserPrincipal.FindByIdentity(ctx, windowsIdentity.Name);
+                ldapInfo.UserPrincipalName = identity?.UserPrincipalName;
+                var connectionString = Environment.GetEnvironmentVariable("CONNECTION") ?? "server=sqlserver.win.local;DataBase=testdb;integrated security=SSPI";
+                testData = SQLHelper.GetTestData(connectionString, LDAPHelper.GetUPN(upn.UPN));
+            }
+            catch (Exception ex)
+            {
+                ldapInfo.ErrorMessage = ex.ToString();
+            }
+
+            return new AdInfo()
+            {
+                MachineName = Environment.MachineName,
+                AuthenticationType = User.Identity.AuthenticationType.ToString(),
+                ImpersonationLevel = windowsIdentity.ImpersonationLevel.ToString(),
+                TestData = testData,
+                Claims = windowsIdentity.Claims.DistinctBy(claim => claim.Type).ToDictionary(claim => claim.Type, claim => claim.Value),
+                Groups = windowsIdentity.Groups.Select(x => new AdGroup()
+                {
+                    Name = AdGroup.ToName(x),
+                    Value = x.Value
+                }).ToList(),
+                LDAP = ldapInfo,
+            };
         }
 
         // PUT api/values/5
