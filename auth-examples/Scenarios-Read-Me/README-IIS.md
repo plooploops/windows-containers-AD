@@ -1,7 +1,7 @@
 ## IIS Lift and Shift
 We'd like to put together an IIS web site and host it in a Windows Container.
 
-The frontend will send a request to the backend API.  The Backend API will then query SQL using the credentials passed to it from the frontend + UPN from the user in the request from the browser.
+The frontend will send a request to the backend API.  The Backend API will then query SQL using the credentials passed to it from the frontend + UPN from the user in the request from the browser.  The frontend and backend will use separate gMSA accounts.  Also, the frontend gMSA account will be allowed to delegate to the backend gMSA account.
 
 ![Scenario](../../media/iis/scenario.png)
 
@@ -88,14 +88,15 @@ This one should have some print out that shows computer name of the gmsa account
 net config workstation
 ```
 
-# Advanced Debugging 
-Kerberos debugging - kerberos ticket check
+Refer to the [gMSA creation script](../../AD/create-gmsa/gmsacreation.ps1)
 
-```powershell
-klist
+We'll also want to verify the properties are set correctly.
+
+```
+get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToDelegateToAccount','PrincipalsAllowedToRetrieveManagedPassword','kerberosEncryptionType','ServicePrincipalName','msDS-AllowedToDelegateTo','userAccountControl','PrincipalsAllowedToDelegateToAccount'
 ```
 
-should return success message
+![gMSA Properties](../../media/iis/confirm-gmsa.png)
 
 # Remote Debugging
 Remote debug by installing VS debugger in the container. [Remote Debugging](.\README-Remote-Debugging.md)

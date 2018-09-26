@@ -22,7 +22,7 @@ SetSPN -l win\MSMQReceiver$
 New-ADServiceAccount -Name FRONTEND -DNSHostName frontend.win.local -ServicePrincipalNames http/frontend -PrincipalsAllowedToRetrieveManagedPassword "Domain Controllers", "domain admins", "containerhosts" -KerberosEncryptionType RC4, AES128, AES256
 
 Set-ADServiceAccount -Identity frontend -PrincipalsAllowedToRetrieveManagedPassword 'domain admins','domain controllers','containerhosts'
-Set-ADServiceAccount -identity frontend -replace @{'msDS-AllowedToDelegateTo'='LDAP/adVM.win.local','HTTP/wrk1.win.local'}
+Set-ADServiceAccount -identity frontend -replace @{'msDS-AllowedToDelegateTo'='LDAP/adVM.win.local','HTTP/backendinsider.win.local','HTTP/wrk1.win.local'}
 Set-ADServiceAccount -identity frontend -replace @{userAccountControl=16781312}
 #confirm SPN
 SetSPN -l win\frontend$

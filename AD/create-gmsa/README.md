@@ -56,7 +56,7 @@ Get-CredentialSpec
 
 #### Examine gMSA account properties
 ```
-get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToRetrieveManagedPassword','kerberosEncryptionType','ServicePrincipalName','msDS-AllowedToDelegateTo','userAccountControl'
+get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToDelegateToAccount','PrincipalsAllowedToRetrieveManagedPassword','kerberosEncryptionType','ServicePrincipalName','msDS-AllowedToDelegateTo','userAccountControl','PrincipalsAllowedToDelegateToAccount'
 ```
 
 #### General Testing and Troubleshoot for a GMSA Account
