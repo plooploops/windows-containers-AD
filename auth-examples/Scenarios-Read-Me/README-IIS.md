@@ -162,6 +162,11 @@ testdb;Integrated Security=SSPI' <myrepo>/windows-ad:impersonate-backend-windows
 If we click on the 'about' tab, we'll ping the backend and SQL.
 ![Running App](../../media/iis/running-app.png)
 
+Also, if we log out and login with a different user (user2 for example), we'll see that the UPN is picked up and a different set of data returns for that user.
+
+![Running App Other User](../../media/iis/running-app-other-user.png)
+
+
 ***
 ## Environment variables
 
