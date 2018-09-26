@@ -17,6 +17,7 @@ These will describe some of the concepts that we're using in this scenario.
 1. [Version Compatibility](https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility)
 1. [NSG Ports](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nsg-quickstart-portal)
 1. [gMSA Set up Reference](https://gist.github.com/PatrickLang/27c743782fca17b19bf94490cbb6f960)
+1. [gMSA Notes](../../AD/create-gmsa/README.md)
 1. [Remote Debugging](https://www.richard-banks.org/2017/02/debug-net-in-windows-container.html)
 
 # Host Setup
@@ -88,7 +89,7 @@ This one should have some print out that shows computer name of the gmsa account
 net config workstation
 ```
 
-Refer to the [gMSA creation script](../../AD/create-gmsa/gmsacreation.ps1)
+Refer to the [gMSA creation script](../../AD/create-gmsa/gmsacreation.ps1) and [gMSA notes](../../AD/create-gmsa/README.md).
 
 We'll also want to verify the properties are set correctly.
 
@@ -99,7 +100,17 @@ get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToDelegate
 ![gMSA Properties](../../media/iis/confirm-gmsa.png)
 
 # Remote Debugging
-Remote debug by installing VS debugger in the container. [Remote Debugging](.\README-Remote-Debugging.md)
+Remote debug by installing VS debugger in the container. [Remote Debugging Notes](README-Remote-Debugging.md).
+
+# Sample Data
+
+We're going to use the sample data that's included in the [script](../../AD/data/testdata.sql).  Please populate SQL with the sample data, schema, and logins.
+
+We'll also want to include the backend gMSA account as part of the SQL logins and have datareader / datawriter rights to the testdb.
+
+If we've populated it correctly, we should see our table with some data in it.
+
+![SQL Sample data](../../media/iis/data.png)
 
 # Samples
 
