@@ -19,6 +19,8 @@ These will describe some of the concepts that we're using in this scenario.
 1. [gMSA Set up Reference](https://gist.github.com/PatrickLang/27c743782fca17b19bf94490cbb6f960)
 1. [gMSA Notes](../../AD/create-gmsa/README.md)
 1. [Remote Debugging](https://www.richard-banks.org/2017/02/debug-net-in-windows-container.html)
+1. [SQL Server Setup Notes](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-2017
+)
 
 # Host Setup
 
@@ -103,6 +105,9 @@ get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToDelegate
 Remote debug by installing VS debugger in the container. [Remote Debugging Notes](README-Remote-Debugging.md).
 
 # Sample Data
+
+We'll assume that we've set up the SQL server using the ARM template in the repo.  There's a workaround for SQL Server acceess here: [SQL Server Setup Notes](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-2017
+).
 
 We're going to use the sample data that's included in the [script](../../AD/data/testdata.sql).  Please populate SQL with the sample data, schema, and logins.
 
