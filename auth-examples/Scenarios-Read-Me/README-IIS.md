@@ -1,6 +1,10 @@
 ## IIS Lift and Shift
 We'd like to put together an IIS web site and host it in a Windows Container.
 
+The frontend will send a request to the backend API.  The Backend API will then query SQL using the credentials passed to it from the frontend + UPN from the user in the request from the browser.
+
+![Scenario](../../media/iis/scenario.png)
+
 #### Links
 
 These will describe some of the concepts that we're using in this scenario.
@@ -133,7 +137,7 @@ docker login
 We'll want a **frontend** container, assuming that we've set up our **frontend insider** gMSA.
 
 ```powershell
-docker run -h frontendinsider -d -p 80:80 -p 4020:4020 -p 4021:4021 --security-opt "credentialspec=file://frontendinsider.json" -e API_URL=http://backendinsider.win.local:81 <myrepo>/windows-ad:impersonate-explicit-frontend-windowsservercore-insider-10.0.17666.1000
+docker run -h frontendinsider -d -p 80:80 -p 4022:4022 -p 4023:4023 --security-opt "credentialspec=file://frontendinsider.json" -e API_URL=http://backendinsider.win.local:81 <myrepo>/windows-ad:impersonate-explicit-frontend-windowsservercore-insider-10.0.17666.1000
 ```
 
 We'll want a **backend** container, assuming that we've set up our **backend insider** gMSA.
@@ -142,6 +146,9 @@ We'll want a **backend** container, assuming that we've set up our **backend ins
 docker run -h backendinsider -d -p 81:80 -p 1433:1433 -p 4020:4020 -p 4021:4021 --security-opt "credentialspec=file://backendinsider.json" -e TEST_GROUP=WebUsers -e CONNECTION='Server=sqlserver.win.local;Database=
 testdb;Integrated Security=SSPI' <myrepo>/windows-ad:impersonate-backend-windowsservercore-insider-10.0.17666.1000
 ```
+
+If we click on the 'about' tab, we'll ping the backend and SQL.
+![Running App](../../media/iis/running-app.png)
 
 ***
 ## Environment variables
