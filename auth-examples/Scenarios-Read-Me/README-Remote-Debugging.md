@@ -2,19 +2,22 @@
 
 These notes are adapted from this [Remote Debugging](https://www.richard-banks.org/2017/02/debug-net-in-windows-container.html) article.
 
-We can make sure that the script will sit in the dockerfile for the container we'd like to use for remote debugging.  Also, for simplification purposes, we'll assume that we're using the NAT network and that Visual Studio is on the container host.  This will assist in reaching the container for Visual Studio.  Also, the visual studio remote monitoring application will use ports 4020 and 4021.
+We can make sure that the script will sit in the dockerfile for the container we'd like to use for remote debugging.  Also, for simplification purposes, we'll assume that we're using the NAT network and that Visual Studio is on the container host.  This will assist in reaching the container for Visual Studio.  
+
+
+Also, the visual studio remote monitoring application will use ports depending on [Visual Studio version](https://docs.microsoft.com/en-us/visualstudio/debugger/remote-debugger-port-assignments?view=vs-2017)
 
 ## Make sure the container has the tools running and ports open
 
-Our Dockerfile for the container shouold have the following commands included.
+Our Dockerfile for the container should have the following commands included.
 
 ```
-EXPOSE 4020 4021 
+EXPOSE 4020 4021 #ports depend on VS version
 RUN Invoke-WebRequest -OutFile c:\rtools_setup_x64.exe -Uri https://aka.ms/vs/15/release/RemoteTools.amd64ret.enu.exe; `
     c:\rtools_setup_x64.exe /install /quiet
 ```
 
-Separately, we could run them if we make sure to have the ports open
+Separately, we could run them if we make sure to have the ports open.  Again, the port number will depend on the visual studio version.  Also, if we're running the container using NAT network and visual studio on the host, we may not need to with the port mapping as we could pick them up in the local network through msvsmon discovery.
 
 ```
 docker run -it -p 4020:4020 -p 4021:4021 <image id>

@@ -133,7 +133,7 @@ docker login
 We'll want a **frontend** container, assuming that we've set up our **frontend insider** gMSA.
 
 ```powershell
-docker run -h frontendinsider -d -p 80:80 --security-opt "credentialspec=file://frontendinsider.json" -e API_URL=http://backendinsider.win.local:81 <myrepo>/windows-ad:impersonate-explicit-frontend-windowsservercore-insider-10.0.17666.1000
+docker run -h frontendinsider -d -p 80:80 -p 4020:4020 -p 4021:4021 --security-opt "credentialspec=file://frontendinsider.json" -e API_URL=http://backendinsider.win.local:81 <myrepo>/windows-ad:impersonate-explicit-frontend-windowsservercore-insider-10.0.17666.1000
 ```
 
 We'll want a **backend** container, assuming that we've set up our **backend insider** gMSA.
