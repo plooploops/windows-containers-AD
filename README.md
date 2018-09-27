@@ -12,6 +12,7 @@ To get started:
     - [Create Domain Joined VM](AD/vm-domain-join/README.md)
     - [Configure AD with gMSA](AD/create-gmsa/README.md)
 3. Run Samples
+    - [IIS](auth-examples/Scenarios-Read-Me/README-IIS.md)
     - [MSMQ Monolith](auth-examples/Scenarios-Read-Me/README-Monolith.md)
     - [MSMQ Persistent Volume on Host](auth-examples/Scenarios-Read-Me/README-Persistent-Volume.md)
     - [MSMQ Persistent Volume on Host with Azure File SMB](auth-examples/Scenarios-Read-Me/README-Persistent-Volume-Azure-Files.md)
