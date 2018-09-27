@@ -137,7 +137,6 @@
       "name": "[parameters('dnsLabelPrefix')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]",
         "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
       ],
       "properties": {
@@ -159,22 +158,11 @@
           "osDisk": {
             "caching": "ReadWrite",
             "createOption": "FromImage",
+            "diskSizeGB": "1000",
             "managedDisk": {
               "storageAccountType": "[variables('storageAccountType')]"
             }
-          },
-          "dataDisks": [
-            {
-              "managedDisk": {
-                "storageAccountType": "[variables('storageAccountType')]"
-              },
-              "name": "[concat(parameters('dnsLabelPrefix'),'-data-disk1')]",
-              "caching": "None",
-              "diskSizeGB": "1000",
-              "lun": 0,
-              "createOption": "Empty"
-            }
-          ]
+          }
         },
         "networkProfile": {
           "networkInterfaces": [

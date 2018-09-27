@@ -71,9 +71,9 @@ cd "C:\Program Files\Microsoft Visual Studio 15.0\Common7\IDE\Remote Debugger\x6
 
 Find the running container from Visual Studio.  If we have msvsmon running and the ports + container is network reachable from the host for Visual Studio, we should be able to see an option to attach to the remote address.
 
-![Find Container.](../../media/remote-debugging/remote-debugging-step-1.png 'Find Container')
+![Find Container.](../media/remote-debugging/remote-debugging-step-1.png 'Find Container')
 
 Assuming that the process we want to debug is running in the container, we should be able to attach to it as well.  For IIS, we'll want to make sure that w3wp is running, and we can try to ping the container endpoint to make sure that the IIS process will respond.
 
-![Attach Process.](../../media/remote-debugging/remote-debugging-step-2.png 'Attach Process')
+![Attach Process.](../media/remote-debugging/remote-debugging-step-2.png 'Attach Process')
 
