@@ -3,7 +3,7 @@
 
 We will mount a persistent volume to the host (could be a Windows VM, Azure Windows VM) so that the private queue (e.g. .\private$\testQueue) will have the data stored in the mount.
 
-![Persistent volume on host for MSMQ private queue with sender and receiver containers.](../../media/persistent-volume/scenario.png 'Persistent Volume')
+![Persistent volume on host for MSMQ private queue with sender and receiver containers.](../media/persistent-volume/scenario.png 'Persistent Volume')
 
 #### Links
 
@@ -27,7 +27,7 @@ It will grant **permissions** for **everyone** on that folder (this is just a te
 
 We will also want to verify the bootstrapped data will exist in the mount once we run the container.  If the script completes successfully, we'll have the **storage** and **mapping** folders in the **volume mount**.
 
-![Persistent volume data.](../../media/persistent-volume/volume-mount-data.png 'Queue Data')
+![Persistent volume data.](../media/persistent-volume/volume-mount-data.png 'Queue Data')
 
 #### Running the scenario
 
@@ -37,7 +37,7 @@ We can verify the permissions on the folder in PowerShell.
 Get-ACL C:\<local volume mount>
 ```
 
-![Persistent volume permissions.](../../media/persistent-volume/folder-permissions.png 'Permissions')
+![Persistent volume permissions.](../media/persistent-volume/folder-permissions.png 'Permissions')
 
 We'll want to run the containers next and point them to the local volume mount.
 
@@ -80,8 +80,8 @@ docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq\re
 ```
 
 
-![Persistent volume both containers.](../../media/persistent-volume/together.png 'Both Containers Interactive')
+![Persistent volume both containers.](../media/persistent-volume/together.png 'Both Containers Interactive')
 
 We can also stop the Sender container (docker stop [container id]), and then the Receiver container should have less messages.
 
-![Persistent volume only receiver containers.](../../media/persistent-volume/only-receiver.png 'Only receiver container Interactive')
+![Persistent volume only receiver containers.](../media/persistent-volume/only-receiver.png 'Only receiver container Interactive')

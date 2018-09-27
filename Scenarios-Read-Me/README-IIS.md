@@ -3,7 +3,7 @@ We'd like to put together an IIS web site and host it in a Windows Container.
 
 The frontend will send a request to the backend API.  The Backend API will then query SQL using the credentials passed to it from the frontend + UPN from the user in the request from the browser.  The frontend and backend will use separate gMSA accounts.  Also, the frontend gMSA account will be allowed to delegate to the backend gMSA account.
 
-![Scenario](../../media/iis/scenario.png)
+![Scenario](../media/iis/scenario.png)
 
 #### Links
 
@@ -17,7 +17,7 @@ These will describe some of the concepts that we're using in this scenario.
 1. [Version Compatibility](https://docs.microsoft.com/en-us/virtualization/windowscontainers/deploy-containers/version-compatibility)
 1. [NSG Ports](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nsg-quickstart-portal)
 1. [gMSA Set up Reference](https://gist.github.com/PatrickLang/27c743782fca17b19bf94490cbb6f960)
-1. [gMSA Notes](../../AD/create-gmsa/README.md)
+1. [gMSA Notes](../AD/create-gmsa/README.md)
 1. [Remote Debugging](https://www.richard-banks.org/2017/02/debug-net-in-windows-container.html)
 1. [SQL Server Setup Notes](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-2017
 )
@@ -36,6 +36,18 @@ netsh advfirewall firewall add rule name="Open Port 80 out" dir=out action=allow
 
 We'll also want to make sure that if this container host is a VM hosted in Azure, that we also open the same ports in the [NSG](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/nsg-quickstart-portal).
 
+# Sample Data
+
+At this time, we have not provided a template to add and configure an SQL server on the domain. You can add in the SQL server however you choose, however it must be domain joined.  If you use the SQL Server image that's available in Azure, you may have issue accessing the default instance after you join the server to the domain.  There's a workaround for SQL Server acceess here: [SQL Server Setup Notes](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-2017).
+
+We're going to use the sample data that's included in the [script](../../AD/data/testdata.sql).  Please populate SQL with the sample data, schema, and logins.
+
+We'll also want to include the backend gMSA account as part of the SQL logins and have datareader / datawriter rights to the testdb.
+
+If we've populated it correctly, we should see our table with some data in it.
+
+![SQL Sample data](../media/iis/data.png)
+
 # Container Running Notes
 
 Set host name to the same as the name of the gmsa.  See other [debugging tips](https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/a887583835a91a27b7b1289ec6059808bd912ab1/virtualization/windowscontainers/manage-containers/walkthrough-iis-serviceaccount.md#test-a-container-using-the-service-account).
@@ -44,20 +56,17 @@ Set host name to the same as the name of the gmsa.  See other [debugging tips](h
 docker run -h app1 -it --security-opt "credentialspec=file://app1.json" microsoft/windowsservercore:1709 cmd
 ```
 
-in the container run
+## Test gMSA in Container
 
-```cmd
-nltest.exe /query
-nltest.exe /parentdomain
+Refer to the [gMSA creation script](../AD/create-gmsa/gmsacreation.ps1) and [gMSA notes](../AD/create-gmsa/README.md).
+
+We'll also want to verify the properties are set correctly.
+
+```
+get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToDelegateToAccount','PrincipalsAllowedToRetrieveManagedPassword','kerberosEncryptionType','ServicePrincipalName','msDS-AllowedToDelegateTo','userAccountControl','PrincipalsAllowedToDelegateToAccount'
 ```
 
-> This should return the DC
-
-```cmd
-net config workstation
-```
-
-> This one should have some print out that shows computer name of the gmsa account)
+![gMSA Properties](../media/iis/confirm-gmsa.png)
 
 ## Advanced Debugging
 
@@ -67,55 +76,9 @@ Kerberos debugging - kerberos ticket check. From inside the container, run:
 klist
 ```
 
-#### Test gMSA in Container
-
-```powershell
-nltest.exe /query
-```
-
-This should return the DC.
-
-```powershell
-nltest.exe /parentdomain
-```
-
-Check the connection to the DC
-
-```powershell
-nltest.exe /sc_verify:<parent domain e.g. win.local>
-```
-
-This one should have some print out that shows computer name of the gmsa account.
-
-```powershell
-net config workstation
-```
-
-Refer to the [gMSA creation script](../../AD/create-gmsa/gmsacreation.ps1) and [gMSA notes](../../AD/create-gmsa/README.md).
-
-We'll also want to verify the properties are set correctly.
-
-```
-get-adserviceaccount -identity MSMQSend -properties 'PrincipalsAllowedToDelegateToAccount','PrincipalsAllowedToRetrieveManagedPassword','kerberosEncryptionType','ServicePrincipalName','msDS-AllowedToDelegateTo','userAccountControl','PrincipalsAllowedToDelegateToAccount'
-```
-
-![gMSA Properties](../../media/iis/confirm-gmsa.png)
-
 # Remote Debugging
 Remote debug by installing VS debugger in the container. [Remote Debugging Notes](README-Remote-Debugging.md).
 
-# Sample Data
-
-We'll assume that we've set up the SQL server using the ARM template in the repo.  There's a workaround for SQL Server acceess here: [SQL Server Setup Notes](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-2017
-).
-
-We're going to use the sample data that's included in the [script](../../AD/data/testdata.sql).  Please populate SQL with the sample data, schema, and logins.
-
-We'll also want to include the backend gMSA account as part of the SQL logins and have datareader / datawriter rights to the testdb.
-
-If we've populated it correctly, we should see our table with some data in it.
-
-![SQL Sample data](../../media/iis/data.png)
 
 # Samples
 
@@ -165,11 +128,11 @@ testdb;Integrated Security=SSPI' <myrepo>/windows-ad:impersonate-backend-windows
 ```
 
 If we click on the 'about' tab, we'll ping the backend and SQL.
-![Running App](../../media/iis/running-app.png)
+![Running App](../media/iis/running-app.png)
 
 Also, if we log out and login with a different user (user2 for example), we'll see that the UPN is picked up and a different set of data returns for that user.
 
-![Running App Other User](../../media/iis/running-app-other-user.png)
+![Running App Other User](../media/iis/running-app-other-user.png)
 
 
 ***
