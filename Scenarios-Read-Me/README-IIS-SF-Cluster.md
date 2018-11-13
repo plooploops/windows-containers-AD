@@ -54,7 +54,7 @@ We'll want to set up the nodes using a Azure Virtual Machine Scale Set in a Serv
 We'll want to update the vmImageSku to point to the 1803 image, which is in the [service fabric deployment parameters json file](../AD/sf-cluster/sfparameters.json).
 
 ```json
-"vmImageSku": { 
+"vmImageSku": {
 	"type":"string",
 	"defaultValue":"2016-Datacenter",
 	"metadata": {
