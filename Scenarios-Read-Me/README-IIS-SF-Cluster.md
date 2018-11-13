@@ -54,12 +54,12 @@ We'll want to set up the nodes using a Azure Virtual Machine Scale Set in a Serv
 We'll want to update the vmImageSku to point to the 1803 image, which is in the [service fabric deployment parameters json file](../AD/sf-cluster/sfparameters.json).
 
 ```json
-"vmImageSku": {	 
- 	"type": "string",
- 	"defaultValue": "2016-Datacenter",
- 	"metadata": {
- 	"description": "VM image SKU"
- 	}
+"vmImageSku": { 
+	"type":"string",
+	"defaultValue":"2016-Datacenter",
+	"metadata": {
+	"description":"VM image SKU"
+	}
 ```
 
 The deployment parameter should use the 1803 image.  We can also pass through at run time from the azure cli.
@@ -152,7 +152,7 @@ We can also test the frontend, by going to the test endpoint.  If we're getting 
 We'll want to make sure that we tidy up the [Domain Controller deployment parameters](../AD/sf-cluster/dcazuredeploy.parameters.json).  Once we've updated it, we should be able to use the Azure CLI to deploy a DC.
 
 ```az cli
-az group deployment create --name DCDeployment --resource-group andy-sf-iis-test --template-file .\dcazuredeploy.json --parameters .\dcazuredeploy.parameters.json
+az group deployment create --name DCDeployment --resource-group my-sf-iis-test --template-file .\dcazuredeploy.json --parameters .\dcazuredeploy.parameters.json
 ```
 
 # Add a SQL VM
@@ -204,7 +204,7 @@ In case we're using RDP, we can shutdown the vm.
 ```powershell
 shutdown /r /f
 ```
-For a box that needs to domain join, we can run a script to join the domain.
+For a box that needs to domain join, we can run a script to join the domain.  This assumes that the user's credential is already part of the domain.
 
 ```powershell
 $domain = "win.local"
@@ -297,7 +297,7 @@ Please note that with 1803, we'll want to have separate gMSAs for each container
 
 ### On Each of the Cluster Nodes
 
-We'll want to remote into each of the nodes.  This will help with the GMSA set up.
+We'll want to remote into each of the nodes.  This will help with the GMSA set up.  We can use the IP:port mapping from the Azure Load Balancer NAT rules.
 
 ```powershell
 Add-WindowsFeature RSAT-AD-PowerShell 
