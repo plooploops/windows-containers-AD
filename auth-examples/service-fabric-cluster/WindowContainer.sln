@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2035
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "WindowContainer", "WindowContainer\WindowContainer.sfproj", "{59229B00-531D-4955-829F-1B62A49205FB}"
+EndProject
+Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "WindowsContainerBackend", "WindowsContainerBackend\WindowsContainerBackend.sfproj", "{9DFBA332-DCD3-4F99-A01A-91397F98F6EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59229B00-531D-4955-829F-1B62A49205FB}.Debug|x64.ActiveCfg = Debug|x64
+		{59229B00-531D-4955-829F-1B62A49205FB}.Debug|x64.Build.0 = Debug|x64
+		{59229B00-531D-4955-829F-1B62A49205FB}.Debug|x64.Deploy.0 = Debug|x64
+		{59229B00-531D-4955-829F-1B62A49205FB}.Release|x64.ActiveCfg = Release|x64
+		{59229B00-531D-4955-829F-1B62A49205FB}.Release|x64.Build.0 = Release|x64
+		{59229B00-531D-4955-829F-1B62A49205FB}.Release|x64.Deploy.0 = Release|x64
+		{9DFBA332-DCD3-4F99-A01A-91397F98F6EE}.Debug|x64.ActiveCfg = Debug|x64
+		{9DFBA332-DCD3-4F99-A01A-91397F98F6EE}.Debug|x64.Build.0 = Debug|x64
+		{9DFBA332-DCD3-4F99-A01A-91397F98F6EE}.Debug|x64.Deploy.0 = Debug|x64
+		{9DFBA332-DCD3-4F99-A01A-91397F98F6EE}.Release|x64.ActiveCfg = Release|x64
+		{9DFBA332-DCD3-4F99-A01A-91397F98F6EE}.Release|x64.Build.0 = Release|x64
+		{9DFBA332-DCD3-4F99-A01A-91397F98F6EE}.Release|x64.Deploy.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B5CCCD5-F6DE-492B-A327-EBA992615D08}
+	EndGlobalSection
+EndGlobal

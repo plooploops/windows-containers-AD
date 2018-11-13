@@ -35,11 +35,15 @@ namespace windows_auth_impersonate.Controllers
 
                 var identity = UserPrincipal.FindByIdentity(ctx, windowsIdentity.Name);
                 ldapInfo.UserPrincipalName = identity?.UserPrincipalName;
-                var connectionString = Environment.GetEnvironmentVariable("CONNECTION") ?? "server=sqlserver.win.local;DataBase=testdb;integrated security=SSPI";
+                var connectionString = Environment.GetEnvironmentVariable("CONNECTION") ?? "Server=sqlvm.win.local;Database=testdb;Integrated Security=SSPI";
+                Console.WriteLine("This is my connection - " + connectionString);
                 testData = SQLHelper.GetTestData(connectionString, ldapInfo.UserPrincipalName);
+                Console.WriteLine("Finished retrieving from DB");
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Unable to retrieve from DB");
+                Console.WriteLine(ex.ToString());
                 ldapInfo.ErrorMessage = ex.ToString();
             }
 

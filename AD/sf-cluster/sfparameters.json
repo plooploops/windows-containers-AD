@@ -1,0 +1,78 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "value": "1803servicefabric"
+        },
+        "clusterLocation": {
+            "value": "eastus"
+        },
+        "computeLocation": {
+            "value": "eastus"
+        },
+        "adminUserName": {
+            "value": "sysadmin"
+        },
+        "adminPassword": {
+            "value": ""
+        },
+        "nicName": {
+            "value": "NIC-1803servicefabric"
+        },
+        "publicIPAddressName": {
+            "value": "1803servicefabric-PubIP"
+        },
+        "dnsName": {
+            "value": "1803servicefabric"
+        },
+        "virtualNetworkName": {
+            "value": "VNet"
+        },
+        "lbName": {
+            "value": "LB-1803servicefabric"
+        },
+        "lbIPName": {
+            "value": "LBIP-1803servicefabric"
+        },
+        "applicationDiagnosticsStorageAccountName": {
+            "value": "sfdg1803sa"
+        },
+        "supportLogStorageAccountName": {
+            "value": "sflogs1803sa"
+        },
+        "sourceVaultValue": {
+            "value": ""
+        },
+        "certificateUrlValue": {
+            "value": ""
+        },
+        "certificateThumbprint": {
+            "value": ""
+        },
+        "vmImageSku": {
+            "value": "Datacenter-Core-1803-with-Containers-smalldisk"
+        },
+        "vmImageOffer": {
+            "value": "WindowsServerSemiAnnual"
+        },
+        "nt0ephemeralStartPort": {
+            "value": 49152
+        },
+        "nt0ephemeralEndPort": {
+            "value": 65534
+        },
+        "nt0applicationStartPort": {
+            "value": 20000
+        },
+        "nt0applicationEndPort": {
+            "value": 30000
+        },
+        "nt0fabricTcpGatewayPort": {
+            "value": 19000
+        },
+        "nt0fabricHttpGatewayPort": {
+            "value": 19080
+        }
+    }
+}

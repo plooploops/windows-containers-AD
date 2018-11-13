@@ -9,11 +9,11 @@ docker build -f web-builder/Dockerfile -t "$repo/4.7-windowsservercore-1709-buil
 docker build -f no-auth/Dockerfile -t "$repo/windows-ad:no-auth" no-auth
 docker build -f windows-auth-simple/Dockerfile -t "$repo/windows-ad:simple" .
 docker build -f iis-simple/Dockerfile -t "$repo/windows-ad:iis-simple" iis-simple
-docker build -f windows-auth-impersonate-frontend/Dockerfile -t "$repo/windows-ad:impersonate-frontend" .
-docker build -f windows-auth-impersonate-backend/Dockerfile -t "$repo/windows-ad:impersonate-backend" .
-docker build -f windows-auth-impersonate-explicit-frontend/Dockerfile -t "$repo/windows-ad:impersonate-explicit-frontend" .
-docker build -f windows-auth-impersonate-groupupn-backend/Dockerfile -t "$repo/windows-ad:impersonate-groupupn-backend" .
-docker build -f windows-auth-impersonate-globalasax-backend/Dockerfile -t "$repo/windows-ad:impersonate-globalasax-backend" .
+docker build -f windows-auth-impersonate-frontend/Dockerfile -t "$repo/windows-ad:impersonate-frontend-1803" .
+docker build -f windows-auth-impersonate-backend/Dockerfile -t "$repo/windows-ad:impersonate-backend-1803" .
+docker build -f windows-auth-impersonate-explicit-frontend/Dockerfile -t "$repo/windows-ad:impersonate-explicit-frontend-1803" .
+docker build -f windows-auth-impersonate-groupupn-backend/Dockerfile -t "$repo/windows-ad:impersonate-groupupn-backend-1803" .
+docker build -f windows-auth-impersonate-globalasax-backend/Dockerfile -t "$repo/windows-ad:impersonate-globalasax-backend-1803" .
 
 #MSMQ
 docker build -f MSMQBase/Dockerfile -t "$repo/windows-ad:msmq-base-1803" .

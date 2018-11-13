@@ -7,11 +7,11 @@ param (
 docker push "$repo/windows-ad:no-auth"
 docker push "$repo/windows-ad:simple"
 docker push "$repo/windows-ad:iis-simple"
-docker push "$repo/windows-ad:impersonate-frontend"
-docker push "$repo/windows-ad:impersonate-backend"
-docker push "$repo/windows-ad:impersonate-explicit-frontend"
-docker push "$repo/windows-ad:impersonate-groupupn-backend"
-docker push "$repo/windows-ad:impersonate-globalasax-backend"
+docker push "$repo/windows-ad:impersonate-frontend-1803"
+docker push "$repo/windows-ad:impersonate-backend-1803"
+docker push "$repo/windows-ad:impersonate-explicit-frontend-1803"
+docker push "$repo/windows-ad:impersonate-groupupn-backend-1803"
+docker push "$repo/windows-ad:impersonate-globalasax-backend-1803"
 
 #base image
 docker push "$repo/windows-ad:msmq-base-1803"
