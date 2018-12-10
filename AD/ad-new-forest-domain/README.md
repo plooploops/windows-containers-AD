@@ -54,7 +54,7 @@ $group | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
 
 #### Create AD Users (Optional)
 
-Create additional test users if needed.
+Create additional test users if needed.  Three were created for you if you used the provided script.
 
 ```powershell
 New-ADUser -Name User1 -PasswordNeverExpires $true -AccountPassword ("<password>" | ConvertTo-SecureString -AsPlainText -Force) -Enabled $true
@@ -63,3 +63,4 @@ $usergroup = New-ADGroup -GroupCategory Security -DisplayName "Web Authorized Us
 $usergroup | Add-ADGroupMember -Members (Get-ADComputer -Identity worker1)
 ```
 Once the domain controller is completed, you can [join additional member servers](AD/vm-domain-join/README.md) (worker1, worker2, etc) to act as the container host machines.
+
