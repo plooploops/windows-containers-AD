@@ -13,10 +13,11 @@ To get started:
 
 1. Clone this repo. The commands below where written and run from the WSL.
 
-2. Set up AD
+2. Set up AD and supporing infrastructure
     - [Create Domain Controller](AD/ad-new-forest-domain/README.md)
-    - [Create Domain Joined VM](AD/vm-domain-join/README.md)
-    - [Configure AD with gMSA](AD/create-gmsa/README.md)
+    - [Create Domain Joined VM](AD/vm-domain-join/README.md) to be container host machines.
+    - [Add a Domain Joined SQL Server](AD/sql-server/README.md) (Needed for IIS scenarios)
+    - [Configure AD with GMSA](AD/create-gmsa/README.md)
 3. Run Samples
     - [IIS](Scenarios-Read-Me/README-IIS.md)
     - [IIS on Azure Service Fabric](Scenarios-Read-Me/README-IIS-SF-Cluster.md)
