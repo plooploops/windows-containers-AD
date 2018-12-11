@@ -225,26 +225,30 @@ get-adserviceaccount -identity backend -properties 'PrincipalsAllowedToDelegateT
 
 We'll want to remote into each of the nodes. We can use the IP:port mapping from the Azure Load Balancer NAT rules, just like we did to domain join them.
 
-```powershell
-Add-WindowsFeature RSAT-AD-PowerShell 
-Install-WindowsFeature ADLDS 
-Import-Module ActiveDirectory 
-Install-ADServiceAccount frontend
-Install-ADServiceAccount backend
-Shutdown /r /f
+On each node, create a credential spec file.  Once you've created one copy of the file you could optionally copy over the credential spec to the other machines. 
+
 ```
-
-Login to the node from the Virtual Machine Scale Set.  We'll create a credential spec, but we could also copy over the credential spec as well.
-
-```powershell
-Test-ADServiceAccount frontend 
-Test-ADServiceAccount backend
-
 Start-BitsTransfer https://raw.githubusercontent.com/Microsoft/Virtualization-Documentation/live/windows-server-container-tools/ServiceAccounts/CredentialSpec.psm1 
 Import-Module .\CredentialSpec.psm1 
 New-CredentialSpec -Name frontend -AccountName frontend 
 New-CredentialSpec -Name backend -AccountName backend # should output location of the files Get-CredentialSpec
 ```
+
+If you want to verify that the GMSA account is available to the cluster nodes, you can add on the AD RSAT tools to test and/or install the service accounts directly. 
+
+```powershell
+Add-WindowsFeature RSAT-AD-PowerShell 
+Install-WindowsFeature ADLDS 
+Import-Module ActiveDirectory 
+
+Test-ADServiceAccount frontend 
+Test-ADServiceAccount backend
+
+Install-ADServiceAccount frontend
+Install-ADServiceAccount backend
+
+```
+
 
 # Host Setup and Load Balancers
 
