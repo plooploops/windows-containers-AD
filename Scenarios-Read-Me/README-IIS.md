@@ -30,17 +30,10 @@ Refer to the [gMSA creation script](../AD/create-gmsa/gmsacreation.ps1) and [gMS
 
 You also need to created Credspec.json files for both GMSAs and ensure they are available on the container host VM.
 
-## Sample Data
+## SQL Server and Sample Data
 
-At this time, we have not provided a template to add and configure an SQL server on the domain. You can add in the SQL server however you choose, however it must be domain joined.  If you use the SQL Server image that's available in Azure, you may have issue accessing the default instance after you join the server to the domain.  There's a workaround for SQL Server acceess here: [SQL Server Setup Notes](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/connect-to-sql-server-when-system-administrators-are-locked-out?view=sql-server-2017).
+ However we have provided some information about [setting up a SQL Server](../../AD/sql-server/README.md) to use with this scenario, along with some sample data.
 
-We're going to use the sample data that's included in the [script](../../AD/data/testdata.sql).  Please populate SQL with the sample data, schema, and logins.
-
-We'll also want to include the backend gMSA account as part of the SQL logins and have datareader / datawriter rights to the testdb.
-
-If we've populated it correctly, we should see our table with some data in it.
-
-![SQL Sample data](../media/iis/data.png)
 
 ## Running the Containers for IIS Frontend and Backend
 
