@@ -292,7 +292,7 @@ We can also test the frontend, by going to the test endpoint.  If we're getting 
 ## Run the 1803 Containers with Service Fabric Cluster
 
 We'll want to make sure we open up the [Solution](../auth-examples/service-fabric-cluster/WindowContainer.sln) in Visual Studio.
-
+F
 ![Update Cloud Publish xml](../media/iis-sf-cluster/sf-cluster-publish-0.png)
 
 We'll want to make sure to update the cloud.xml publish profile in each project; this will let us specify the management endpoint and certificate we'd like to use in order to publish to Service Fabric Cluster.
