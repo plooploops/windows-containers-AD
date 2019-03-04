@@ -11,7 +11,13 @@ The queue by default will be located at .\private$\testQueue.
 docker run -it <my-repo>/windows-ad:msmq-monolith-test
 ```
 
-We should be able to see the private queue accessible from both the sender and receiver applications.  Since we're in interactive mode, we can also attach to the running container and run the applications separately.
+We should be able to see the private queue accessible from both the sender and receiver applications.  
+
+Since we're in interactive mode, we can also attach to the running container and run the applications separately.  We can also examine the logs if we redirect output to the file system.
+
+![Monolith with private queue.](../media/monolith/logging.png 'Monolith Logs')
+
+### Running the applications
 
 ```powershell
 docker run -d <my-repo>/windows-ad:msmq-monolith-test
@@ -30,4 +36,3 @@ C:\Receiver\MSMQReceiverTest.exe
 ```
 
 ![Test Success.](../media/monolith/successful-test.png 'Monolith test')
-

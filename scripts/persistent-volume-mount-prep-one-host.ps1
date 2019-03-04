@@ -55,8 +55,9 @@ start-Sleep -Seconds 2
 docker rm persistent_volume_bootstrap
 start-Sleep -Seconds 2
 
-docker run --name=persistent_volume_bootstrap -d -v c:\ContainerData\msmq:c:/volume-data "$repo/windows-ad:msmq-persistent-volume-bootstrap"
+docker run --name=persistent_volume_bootstrap -d -v c:\ContainerData\msmq:c:/volume-data "$repo/windows-ad:msmq-persistent-volume-bootstrap-1809"
 
+#existence check which may change depending on the host.
 while(-Not (Test-Path -Path C:\ContainerData\MSMQ\storage) -And -Not (Test-Path -Path C:\ContainerData\MSMQ\Mapping)) { Start-Sleep -Seconds 2 }
 
 cp -r C:\containerdata\msmq\* C:\msmq\receiver -force
@@ -74,10 +75,10 @@ Remove-Item $bootstrapvolumepath -Force -Recurse
 # docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -it -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' -e TRACE_LEVEL=1 "$repo/windows-ad:msmq-persistent-volume-sender-test"
 
 #make a sender
-docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' "$repo/windows-ad:msmq-persistent-volume-sender-test"
+docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' "$repo/windows-ad:msmq-persistent-volume-sender-test-1809"
 
 #make a receiver
-docker run --name=persistent_volume_receiver_test --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\msmq\receiver:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test"
+docker run --name=persistent_volume_receiver_test --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\msmq\receiver:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test-1809"
 
 # docker run --name=persistent_volume_sender_test -it -v c:\msmq:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-sender-test"
 # docker run --name=persistent_volume_receiver_test -it -v c:\msmq:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test"

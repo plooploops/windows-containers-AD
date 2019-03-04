@@ -23,7 +23,7 @@ These will describe some of the concepts that we're using in this scenario.
 #### Prepare environment
 
 ##### Set up Azure File Share
-We can run a set up script in **.\scripts\persistent-volume-mount-prep-azure-file-create.ps1**, be sure to adapt it to the **appropriate settings**!  We'll work through the main steps of the script.
+We can run a [Setup Script](../scripts/persistent-volume-mount-prep-azure-file-create.ps1), and be sure to adapt it to the **appropriate settings**!  We'll work through the main steps of the script.
 
 Run this script on the host with elevated permissions in PowerShell.
 
@@ -60,8 +60,7 @@ az ad sp list --spn "http://$spn"
 ```
 ##### Set up SMB Link on the *Host*
 
-Run the SMB set up script:
-**.\scripts\persistent-volume-mount-prep-azure-file-smb.ps1**, and make sure to point to the **correct locations** for the Azure File Share.
+Run the SMB [setup script](../scripts/persistent-volume-mount-prep-azure-file-smb.ps1), and make sure to point to the **correct locations** for the Azure File Share.
 ```
 .\scripts\persistent-volume-mount-prep-azure-file-smb.ps1
 ```
@@ -72,7 +71,7 @@ It will grant **permissions** for **everyone** on that folder (this is just a te
 
 #### Prep script
 
-A setup script in  **.\scripts\persistent-volume-mount-prep-azure-file-smb-one-host.ps1** will help with this process, and we'll want to run it on the host.  
+A [setup script](../scripts/persistent-volume-mount-prep-azure-file-smb-one-host.ps1) will help with this process, and we'll want to run it on the host.  
 
 This will assume that we've created the gMSA accounts in the **same host**, e.g. we will have a cred spec for **MSMQRec** and **MSMQSend**.
 ```powershell

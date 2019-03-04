@@ -57,6 +57,7 @@ start-Sleep -Seconds 2
 
 docker run --name=persistent_volume_bootstrap -d -v c:\ContainerData\msmq:c:/volume-data "$repo/windows-ad:msmq-persistent-volume-bootstrap"
 
+#Note that the existence check may change on various hosts.
 while(-Not (Test-Path -Path C:\ContainerData\MSMQ\storage) -And -Not (Test-Path -Path C:\ContainerData\MSMQ\Mapping)) { Start-Sleep -Seconds 2 }
 
 cp -r C:\containerdata\msmq\* C:\smbmappings\msmqsharesa-msmq-share\receiver -force

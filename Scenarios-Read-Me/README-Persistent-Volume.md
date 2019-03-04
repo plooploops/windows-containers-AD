@@ -15,10 +15,10 @@ These will describe some of the concepts that we're using in this scenario.
 
 #### Prep script
 
-A setup script in  **.\scripts\persistent-volume-mount-prep.ps1** will help with this process, and we'll want to run it on the host.  We will run the containers **sequentially** as each of the containers will have their own queue manager, which will assume ownership of the file mount.  This **prevents two containers** from using the **same volume mount** and running at the **same time**.
+A [setup script](../scripts/persistent-volume-mount-prep-one-host.ps1) will help with this process, and we'll want to run it on the host.  We will run the containers **sequentially** as each of the containers will have their own queue manager, which will assume ownership of the file mount.  This **prevents two containers** from using the **same volume mount** and allows running them at the **same time**.
 
 ```powershell
-.\scripts\persistent-volume-mount-prep.ps1
+.\scripts\persistent-volume-mount-prep-one-host.ps1
 ```
 
 The script will set up a **local folder** for testing the **volume mount** on the host, for instance C:\msmq.
@@ -43,12 +43,12 @@ We'll want to run the containers next and point them to the local volume mount.
 
 We can test the **sender** with the **default driver (NAT)** in an interative mode:
 ```powershell
-docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -it -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' -e TRACE_LEVEL=1 <my-repo>/windows-ad:msmq-persistent-volume-sender-test
+docker run --name=persistent_volume_sender_test --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -it -v c:\msmq\sender:c:/Windows/System32/msmq -e QUEUE_NAME='MSMQRec\private$\testQueue' -e TRACE_LEVEL=1 <my-repo>/windows-ad:msmq-persistent-volume-sender-test-1809
 ```
 
 We can test the **receiver** with the **default driver (NAT)** in an interative mode:
 ```powershell
-docker run --name=persistent_volume_receiver_test --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\msmq\receiver:c:/Windows/System32/msmq <my-repo>/windows-ad:msmq-persistent-volume-receiver-test
+docker run --name=persistent_volume_receiver_test --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\msmq\receiver:c:/Windows/System32/msmq <my-repo>/windows-ad:msmq-persistent-volume-receiver-test-1809
 ```
 
 If we're using **transparent network driver**, it might look something like this:
@@ -56,13 +56,13 @@ If we're using **transparent network driver**, it might look something like this
 Run the sender.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq\sender:c:/Windows/System32/msmq -h MSMQsend --network=tlan2 --dns=10.123.80.123 --name persistent_store -e QUEUE_NAME='MSMQRec\private$\testQueue' <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq\sender:c:/Windows/System32/msmq -h MSMQsend --network=tlan2 --dns=10.123.80.123 --name persistent_store -e QUEUE_NAME='MSMQRec\private$\testQueue' <my-repo>/windows-ad:msmq-sender-test-1809 powershell
 ```
 
 Run the receiver.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq\receiver:c:/Windows/System32/msmq -h MSMQRec --network=tlan2 --dns=10.123.80.123 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test powershell
+docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq\receiver:c:/Windows/System32/msmq -h MSMQRec --network=tlan2 --dns=10.123.80.123 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test-1809 powershell
 ```
 
 If we're using **NAT network driver** with **port mappings**, it might look something like this:
@@ -70,13 +70,13 @@ If we're using **NAT network driver** with **port mappings**, it might look some
 Run the sender.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq\sender:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store -e QUEUE_NAME='MSMQRec\private$\testQueue' <my-repo>/windows-ad:msmq-sender-test powershell
+docker run --security-opt "credentialspec=file://MSMQsend.json" -it -v C:\msmq\sender:c:/Windows/System32/msmq -h MSMQsend -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --name persistent_store -e QUEUE_NAME='MSMQRec\private$\testQueue' <my-repo>/windows-ad:msmq-sender-test-1809 powershell
 ```
 
 Run the receiver.
 
 ```powershell
-docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq\receiver:c:/Windows/System32/msmq -h MSMQRec -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --ip 172.31.230.92 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test powershell
+docker run --security-opt "credentialspec=file://MSMQRec.json" -it -v C:\msmq\receiver:c:/Windows/System32/msmq -h MSMQRec -p 80:80 -p 4020:4020 -p 4021:4021 -p 135:135/udp -p 389:389 -p 1801:1801/udp -p 2101:2101 -p 2103:2103/udp -p 2105:2105/udp -p 3527:3527 -p 3527:3527/udp -p 2879:2879 --ip 172.31.230.92 --name persistent_store_receiver <my-repo>/windows-ad:msmq-receiver-test-1809 powershell
 ```
 
 
