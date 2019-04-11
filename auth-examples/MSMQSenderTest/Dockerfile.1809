@@ -11,7 +11,7 @@ RUN msbuild MSMQSenderTest\MSMQSenderTest.csproj /p:OutputPath=C:\out /p:DeployO
 
 
 ## final image
-FROM myplooploops/windows-ad:msmq-base-1803
+FROM myplooploops/windows-ad:msmq-base-1809
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 WORKDIR /Sender
