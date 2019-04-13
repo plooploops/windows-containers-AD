@@ -74,7 +74,7 @@ It will grant **permissions** for **everyone** on that folder (this is just a te
 
 #### Prep script
 
-A [setup script](../scripts/persistent-volume-mount-prep-azure-file-smb-one-host.ps1) will help with this process, and we'll want to run it on the host.  
+A [setup script](../scripts/persistent-volume-mount-prep-azure-file-smb-one-host.ps1) will help with this process, and we'll want to run it on the host.  Be sure to adapt the settings for the appropriate host (in this case, 1809). 
 
 This will assume that we've created the gMSA accounts in the **same host**, e.g. we will have a cred spec for **MSMQRec** and **MSMQSend**.
 ```powershell
@@ -163,7 +163,7 @@ First, let's run a **Receiver**.
 Run the **receiver**.
 ```
 #make a receiver
-docker run --network=azure --name=persistent_volume_receiver_test_azure_file --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\smbmappings\msmqsharesa-msmq-share\receiver:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test"
+docker run --network=azure --name=persistent_volume_receiver_test_azure_file --security-opt "credentialspec=file://MSMQRec.json" -h MSMQRec -it -v c:\smbmappings\msmqsharesa-msmq-share\receiver:c:/Windows/System32/msmq "$repo/windows-ad:msmq-persistent-volume-receiver-test-1809"
 ```
 
 We'll want to hop into the container and confirm the IP address.
@@ -182,7 +182,7 @@ Run the **sender**.  Be sure to update the **Container IP Address**, and we can 
 
 ```powershell
 #make a sender
-docker run --network=azure --name=persistent_volume_sender_test_azure_file --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\smbmappings\msmqsharesa-msmq-share\sender:c:/Windows/System32/msmq -e DIRECT_FORMAT_PROTOCOL='TCP' -e QUEUE_NAME='10.0.x.x\private$\testQueue' "$repo/windows-ad:msmq-persistent-volume-sender-test"
+docker run --network=azure --name=persistent_volume_sender_test_azure_file --security-opt "credentialspec=file://MSMQSend.json" -h MSMQSend -d -v c:\smbmappings\msmqsharesa-msmq-share\sender:c:/Windows/System32/msmq -e DIRECT_FORMAT_PROTOCOL='TCP' -e QUEUE_NAME='10.0.x.x\private$\testQueue' "$repo/windows-ad:msmq-persistent-volume-sender-test-1809"
 ```
 
 We can validate the containers are running and sending messages to each other.  We can hop into the sender and check the outgoing messages.
