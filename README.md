@@ -23,6 +23,7 @@ To get started:
     - [MSMQ Monolith](Scenarios-Read-Me/README-Monolith.md)
     - [MSMQ Persistent Volume on Host](Scenarios-Read-Me/README-Persistent-Volume.md)
     - [MSMQ Persistent Volume on Host with Azure File SMB](Scenarios-Read-Me/README-Persistent-Volume-Azure-Files.md)
+     - [MSMQ Persistent Volume on Host with Azure File SMB with Multiple Hosts](Scenarios-Read-Me/README-Persistent-Volume-Azure-Files-Multiple-Hosts.md)
 
 
 ## Links
